@@ -65,6 +65,7 @@ public class EnemyS : MonoBehaviour {
 			renderer.material = deadMat;
 			rigidbody.isKinematic = true;
 			collider.enabled = false;
+
 		}
 		
 	}

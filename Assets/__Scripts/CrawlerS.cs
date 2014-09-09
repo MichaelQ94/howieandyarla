@@ -52,6 +52,7 @@ public class CrawlerS : EnemyS {
 	public float attackingFrameRate = 0.042f; // duration per individual frame
 	public float attackingFrameRateCountdown = 0;
 
+	private bool facingRight = false;
 
 
 	// script for Creepy Crawler enemies
@@ -241,6 +242,23 @@ public class CrawlerS : EnemyS {
 			renderer.material.SetTexture("_MainTex", deadTexture);
 		}
 		else{
+
+			// have crawler face left/right appropriately
+			if (rigidbody.velocity.x > 0){
+				facingRight = true;
+			}
+			if (rigidbody.velocity.x < 0){
+				facingRight = false;
+			}
+			
+			// flip texture to face correct direction
+			if (facingRight){
+				renderer.material.SetTextureScale("_MainTex",new Vector2(1,-1));
+			}
+			else{
+				renderer.material.SetTextureScale("_MainTex",new Vector2(-1,-1));
+			}
+
 			if (invulnerable){
 			if (attacking){
 				if (attackingFrameRateCountdown > 0){

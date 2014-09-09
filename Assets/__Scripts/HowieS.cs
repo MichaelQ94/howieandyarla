@@ -86,13 +86,14 @@ public class HowieS : MonoBehaviour {
 		if (rigidbody.velocity.x < 0){
 			facingRight = false;
 		}
-		
-		/*if (facingRight){
-			attachedSprite.renderer.material.SetTextureScale("_MainTex",new Vector2(-1,-1));
+
+		// flip texture to face correct direction
+		if (facingRight){
+			attachedSprite.renderer.material.SetTextureScale("_MainTex",new Vector2(1,1));
 		}
 		else{
-			attachedSprite.renderer.material.SetTextureScale("_MainTex",new Vector2(1,-1));
-		}*/
+			attachedSprite.renderer.material.SetTextureScale("_MainTex",new Vector2(-1,1));
+		}
 		
 		
 		if (Mathf.Abs(rigidbody.velocity.x) > 0

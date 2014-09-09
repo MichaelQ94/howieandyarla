@@ -46,6 +46,8 @@ public class HeavyEnemyS : EnemyS {
 	public float changeWalkFrameTime;
 	public float changeWalkFrameTimeMax = 0.04f;
 
+	private bool facingRight = false;
+
 
 	
 
@@ -152,6 +154,22 @@ public class HeavyEnemyS : EnemyS {
 
 		if (isDead){
 			renderer.material.SetTexture("_MainTex", deadTexture);
+		}
+		else{
+			if (rigidbody.velocity.x > 0){
+				facingRight = true;
+			}
+			if (rigidbody.velocity.x < 0){
+				facingRight = false;
+			}
+			
+			// flip texture to face correct direction
+			if (facingRight){
+				renderer.material.SetTextureScale("_MainTex",new Vector2(1,-1));
+			}
+			else{
+				renderer.material.SetTextureScale("_MainTex",new Vector2(-1,-1));
+			}
 		}
 
 	}
