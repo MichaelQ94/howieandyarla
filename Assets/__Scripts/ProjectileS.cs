@@ -49,7 +49,10 @@ public class ProjectileS : MonoBehaviour {
 
 		if (other.gameObject.tag == "Enemy"){
 
-			if (other.GetComponent<EnemyS>().beingHeld){
+			// get blocked by held and thrown enemies
+
+			if (other.GetComponent<EnemyS>().beingHeld ||
+			    other.GetComponent<EnemyS>().beingThrown){
 				Destroy(gameObject);
 			}
 			

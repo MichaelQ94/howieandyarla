@@ -161,6 +161,7 @@ public class EnemyS : MonoBehaviour {
 		
 	}
 
+
 	void CheckDeath () {
 
 		if (!isDead){

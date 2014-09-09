@@ -92,10 +92,10 @@ public class YarlaS : MonoBehaviour {
 			//print ("Hit Pickup!");
 			
 		}
-		//if (other.gameObject.tag == "Wall" && launched){
+		if (other.gameObject.tag == "Wall" && launched){
 		//	print("ehhh");
-		//	ReturnToHowie();
-		//}
+			ReturnToHowie();
+		}
 		
 	}
 	
