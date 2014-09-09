@@ -1,4 +1,4 @@
 howieandyarla
 =============
 
-Official repository for Howie and Yarla!
+Work only in the experimental branch! MASTER SHOULD ONLY HAVE THE MOST RECENT, FULLY-FUNCTIONAL BUILD.
