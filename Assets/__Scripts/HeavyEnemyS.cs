@@ -288,7 +288,7 @@ public class HeavyEnemyS : EnemyS {
 		if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Enemy"){
 			
 			// if being thrown, get stunned! otherwise just bounce off
-			if (beingThrown){
+			if (beingThrown || (other.gameObject.tag == "Enemy" && other.gameObject.GetComponent<EnemyS>().beingThrown)){
 				knockedOut = true;
 				stunCountdown = stunMax;
 				if (other.gameObject.tag == "Enemy"){

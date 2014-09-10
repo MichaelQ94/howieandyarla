@@ -7,7 +7,12 @@ public class CameraFlexPOIS : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		transform.position = (NewChompS.N.transform.position + YarlaS.Y.transform.position)/2;
+		if (HowieS.H.isHowieSolo){
+			transform.position = HowieS.H.transform.position;
+		}
+		else{
+			transform.position = (NewChompS.N.transform.position + YarlaS.Y.transform.position)/2;
+		}
 	
 	}
 }
