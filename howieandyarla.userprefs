@@ -1,8 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../Unity Games/LittleOceansMobile/Assets/__Scripts/PlayerCharacterS.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__Scripts/GameOverResetS.cs">
     <Files>
-      <File FileName="../Unity Games/LittleOceansMobile/Assets/__Scripts/PlayerCharacterS.cs" Line="152" Column="58" />
+      <File FileName="../Unity Games/LittleOceansMobile/Assets/__Scripts/PlayerCharacterS.cs" Line="1" Column="1" />
+      <File FileName="Assets/__Scripts/GameOverResetS.cs" Line="1" Column="1" />
+      <File FileName="Assets/__Scripts/HowieS.cs" Line="394" Column="13" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
