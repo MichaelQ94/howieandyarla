@@ -2,8 +2,7 @@
   <MonoDevelop.Ide.Workspace />
   <MonoDevelop.Ide.Workbench ActiveDocument="../Unity Games/LittleOceansMobile/Assets/__Scripts/PlayerCharacterS.cs">
     <Files>
-      <File FileName="../Unity Games/LittleOceansMobile/Assets/__Scripts/CameraFollowS.cs" Line="14" Column="12" />
-      <File FileName="../Unity Games/LittleOceansMobile/Assets/__Scripts/PlayerCharacterS.cs" Line="157" Column="43" />
+      <File FileName="../Unity Games/LittleOceansMobile/Assets/__Scripts/PlayerCharacterS.cs" Line="152" Column="58" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
