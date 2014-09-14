@@ -49,6 +49,8 @@ public class HowieS : MonoBehaviour {
 	public string	gameOverScene; // name of game over scene
 	
 	public static HowieS	H;
+
+	public YarlaS yarla;
 	
 	// Use this for initialization
 	void Start () {
@@ -57,7 +59,9 @@ public class HowieS : MonoBehaviour {
 		
 		kickBackCountdown = kickBackMax;
 		walkCycleRateCountdown = walkCycleRate;
-		
+
+		yarla = GameObject.FindGameObjectWithTag ("YarlaS").GetComponent<YarlaS> ();
+
 	}
 	
 	void Update () {
@@ -170,7 +174,7 @@ public class HowieS : MonoBehaviour {
 				charVel.y = Input.GetAxis("VerticalMac")*maxSpeed*Time.deltaTime;
 			}
 			
-			if (YarlaS.Y.holding){
+			if (yarla.holding){
 				charVel *= chargeSpeedMultiplier;
 			}
 			
@@ -203,8 +207,8 @@ public class HowieS : MonoBehaviour {
 		float mouseDistance = Vector3.Distance(transform.position,mousePos);
 		
 		
-		if (!YarlaS.Y.launched){
-			if (!YarlaS.Y.holding){
+		if (!yarla.launched){
+			if (!yarla.holding){
 				if (inputNumber > 0){
 					if (Application.platform == RuntimePlatform.OSXEditor || 
 					    Application.platform == RuntimePlatform.OSXPlayer ||
@@ -346,7 +350,7 @@ public class HowieS : MonoBehaviour {
 		
 		// for simplicity's sake, currently you can NOT switch while holding an enemy
 		
-		if (!YarlaS.Y.holding){
+		if (!yarla.holding){
 			
 			// check for platform and switch at button press (A on controller, shift on key)
 			

@@ -6,10 +6,11 @@ public class YarlaTendrilS : MonoBehaviour {
 	public TrailRenderer	yarlaGrabRenderer;
 	public TrailRenderer	yarlaAttackRenderer;
 
+	public YarlaS yarla;
 
 	// Use this for initialization
 	void Start () {
-	
+		yarla = GameObject.FindGameObjectWithTag ("YarlaS").GetComponent<YarlaS> ();
 	}
 	
 	// Update is called once per frame
@@ -31,7 +32,7 @@ public class YarlaTendrilS : MonoBehaviour {
 				yarlaAttackRenderer.enabled = false;
 			}
 
-			if (YarlaS.Y.launched){
+			if (yarla.launched){
 				yarlaGrabRenderer.enabled = true;
 			}
 			else{

@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class YarlaS : MonoBehaviour {
-	
+
 	public GameObject	holdTarget;
 	
 	public float		throwMultiplierX = 1000;
@@ -36,11 +36,11 @@ public class YarlaS : MonoBehaviour {
 	public float 		enemyCapturedZ;
 	
 	
-	public static		YarlaS	Y;
+	//public static		YarlaS	Y;
 	
 	void Start () {
 		
-		Y = this;
+		//Y = this;
 		
 		velCountdown = velCountdownMax;
 		launchMaxCooldown = launchMaxTime;

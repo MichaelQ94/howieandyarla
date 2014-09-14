@@ -11,7 +11,7 @@ public class CameraFlexPOIS : MonoBehaviour {
 			transform.position = HowieS.H.transform.position;
 		}
 		else{
-			transform.position = (NewChompS.N.transform.position + YarlaS.Y.transform.position)/2;
+			transform.position = (NewChompS.N.transform.position + GameObject.FindGameObjectWithTag("YarlaS").transform.position)/2;
 		}
 	
 	}

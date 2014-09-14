@@ -17,9 +17,11 @@ public class EnemyDetectS : MonoBehaviour {
 
 	public GameObject	enemyToChomp;
 
+	public YarlaS yarla;
+
 	// Use this for initialization
 	void Start () {
-
+		yarla = GameObject.FindGameObjectWithTag ("YarlaS").GetComponent<YarlaS>();
 	
 	}
 	
@@ -42,12 +44,7 @@ public class EnemyDetectS : MonoBehaviour {
 		// 3. Enemy closest to chompy head
 
 		// first find held enemy if any
-		if (YarlaS.Y.holdTarget != null){
-			enemyBeingHeld = YarlaS.Y.holdTarget;
-		}
-		else{
-			enemyBeingHeld = null;
-		}
+		enemyBeingHeld = yarla.holdTarget;
 
 		if (shortestDistance < dangerDistance || enemyBeingHeld == null){
 			enemyToChomp = closestEnemy;

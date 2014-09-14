@@ -172,7 +172,7 @@ public class ChompS : MonoBehaviour {
 	// damages enemy when activated
 	void DamageEnemy () {
 		
-		// if yarla is holding something, set it as target
+		/*// if yarla is holding something, set it as target
 		if (YarlaS.Y.holdTarget != null){
 			chompTarget = YarlaS.Y.holdTarget;
 		}
@@ -186,7 +186,7 @@ public class ChompS : MonoBehaviour {
 		
 		else{
 			CameraShakeS.C.SmallShake(); // if nothing to bite, do smaller camera shake
-		}
+		}*/
 		
 	}
 	
