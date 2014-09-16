@@ -48,20 +48,12 @@ public class HowieS : MonoBehaviour {
 	public static float health = 100; // Howie's health
 	public string	gameOverScene; // name of game over scene
 	
-	public static HowieS	H;
-
-	public YarlaS yarla;
-	
 	// Use this for initialization
 	void Start () {
-		
-		H = this;
-		
+
 		kickBackCountdown = kickBackMax;
 		walkCycleRateCountdown = walkCycleRate;
-
-		yarla = GameObject.FindGameObjectWithTag ("YarlaS").GetComponent<YarlaS> ();
-
+		
 	}
 	
 	void Update () {
@@ -81,6 +73,8 @@ public class HowieS : MonoBehaviour {
 		
 		
 	}
+
+
 	
 	void Animate () {
 		
@@ -174,7 +168,7 @@ public class HowieS : MonoBehaviour {
 				charVel.y = Input.GetAxis("VerticalMac")*maxSpeed*Time.deltaTime;
 			}
 			
-			if (yarla.holding){
+			if (YarlaS.Y.holding){
 				charVel *= chargeSpeedMultiplier;
 			}
 			
@@ -207,8 +201,8 @@ public class HowieS : MonoBehaviour {
 		float mouseDistance = Vector3.Distance(transform.position,mousePos);
 		
 		
-		if (!yarla.launched){
-			if (!yarla.holding){
+		if (!YarlaS.Y.launched){
+			if (!YarlaS.Y.holding){
 				if (inputNumber > 0){
 					if (Application.platform == RuntimePlatform.OSXEditor || 
 					    Application.platform == RuntimePlatform.OSXPlayer ||
@@ -350,7 +344,7 @@ public class HowieS : MonoBehaviour {
 		
 		// for simplicity's sake, currently you can NOT switch while holding an enemy
 		
-		if (!yarla.holding){
+		if (!YarlaS.Y.holding){
 			
 			// check for platform and switch at button press (A on controller, shift on key)
 			
@@ -366,13 +360,10 @@ public class HowieS : MonoBehaviour {
 				    Application.platform == RuntimePlatform.OSXWebPlayer || 
 				    Application.platform == RuntimePlatform.OSXDashboardPlayer){
 					if (Input.GetButtonDown("SwitchCharMac")){
-						if (isHowieSolo){
-							isHowieSolo = false;
-						}
-						else{
-							isHowieSolo = true;
-						}
-						
+						isHowieSolo=!isHowieSolo;
+						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+						//deactivates/activates chomping ability based on whether howie is solo
+						chompers.SetActive(isHowieSolo);
 						// always reset current frame to ensure no errors
 						currentWalkSprite = 0;
 					}

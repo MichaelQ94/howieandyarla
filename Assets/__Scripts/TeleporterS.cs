@@ -9,9 +9,9 @@ public class TeleporterS : MonoBehaviour {
 
 		if (other.gameObject.tag == "Player"){
 			if (transportTarget != null){
-
+				HowieS howie = other.gameObject.GetComponent<HowieS>();
 				Vector3 transportPos = transportTarget.transform.position;
-				transportPos.z = HowieS.H.transform.position.z;
+				transportPos.z = howie.transform.position.z;
 
 				other.gameObject.transform.position = transportPos;
 

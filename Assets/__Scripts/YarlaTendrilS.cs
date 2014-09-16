@@ -5,19 +5,18 @@ public class YarlaTendrilS : MonoBehaviour {
 
 	public TrailRenderer	yarlaGrabRenderer;
 	public TrailRenderer	yarlaAttackRenderer;
-
-	public YarlaS yarla;
+	public HowieS howie;
 
 	// Use this for initialization
 	void Start () {
-		yarla = GameObject.FindGameObjectWithTag ("YarlaS").GetComponent<YarlaS> ();
+		howie = GameObject.FindGameObjectsWithTag ("Player") [0].GetComponent<HowieS> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
 
-		if (HowieS.H.isHowieSolo){
+		if (howie.isHowieSolo){
 
 			yarlaGrabRenderer.enabled = false;
 			yarlaAttackRenderer.enabled = false;
@@ -32,7 +31,7 @@ public class YarlaTendrilS : MonoBehaviour {
 				yarlaAttackRenderer.enabled = false;
 			}
 
-			if (yarla.launched){
+			if (YarlaS.Y.launched){
 				yarlaGrabRenderer.enabled = true;
 			}
 			else{

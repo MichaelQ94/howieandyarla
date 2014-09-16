@@ -44,10 +44,14 @@ public class NewChompS : MonoBehaviour {
 	public float holdingDamageMult = 2;
 	public float stunnedDamageMult = 1.5f;
 
+	public HowieS howie;
+
 	
 	// Use this for initialization
 	void Start () {
 		N = this;
+
+		howie = GameObject.FindGameObjectsWithTag ("Player") [0].GetComponent<HowieS> ();
 
 		attackTimeHoldMax = attackTimeMax/2;
 	}
@@ -58,9 +62,7 @@ public class NewChompS : MonoBehaviour {
 		// chomp should not work when we are just solo howie!
 		// turn this on and off appropriately
 		
-		if (!HowieS.H.isHowieSolo){
-
-			renderer.enabled = true;
+		if (!howie.isHowieSolo){			renderer.enabled = true;
 
 			MoveChompHead();
 			ChompAttack(); // method for charging chomp attack
@@ -189,8 +191,8 @@ public class NewChompS : MonoBehaviour {
 
 
 					// give Howie a bit of momentum in dir of bite too
-					HowieS.H.KnockBack(0.1f);
-					HowieS.H.rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*howieMovMult*Time.deltaTime;
+					howie.KnockBack(0.1f);
+					howie.rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*howieMovMult*Time.deltaTime;
 
 					// set charge delay to prevent double attacks
 					chargeDelay = chargeDelayMax;
@@ -228,8 +230,8 @@ public class NewChompS : MonoBehaviour {
 						
 						
 						// give Howie a bit of momentum in dir of bite too
-						HowieS.H.KnockBack(0.1f);
-						HowieS.H.rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*howieMovMult*Time.deltaTime;
+						howie.KnockBack(0.1f);
+						howie.rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*howieMovMult*Time.deltaTime;
 						
 						// set charge delay to prevent double attacks
 						chargeDelay = chargeDelayMax;

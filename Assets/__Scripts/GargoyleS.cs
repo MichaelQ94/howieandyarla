@@ -265,17 +265,18 @@ public class GargoyleS : EnemyS {
 
 			// have fireball spawn at gargoyle position and howie z position (to ensure hit)
 			Vector3 projectilePos = transform.position;
-			projectilePos.z = HowieS.H.transform.position.z;
+			projectilePos.z = level.howie.GetComponent<HowieS>().transform.position.z;
 
 			// instantiate that fireball
 			GameObject fireBall1 = 
 				Instantiate(fireBall, projectilePos, Quaternion.identity)
 					as GameObject;
+			fireBall1.tag = "Projectile";
 
 			//offset look target to approx. less accuracy
 			// first projectile veers off in the negative direction
 
-			Vector3	target1 = HowieS.H.transform.position;
+			Vector3	target1 = level.howie.GetComponent<HowieS>().transform.position;
 			target1.x -= Random.Range(0.5f,1)*accuracyMult;
 			target1.y -= Random.Range(0.5f,1)*accuracyMult;
 
@@ -292,7 +293,7 @@ public class GargoyleS : EnemyS {
 					as GameObject;
 
 			// middle shot aims right at Howie
-			Vector3	target2 = HowieS.H.transform.position;
+			Vector3	target2 = level.howie.GetComponent<HowieS>().transform.position;
 
 			fireBall2.transform.LookAt(target2);
 			fireBall2.rigidbody.AddForce(fireBall2.transform.forward*
@@ -305,7 +306,7 @@ public class GargoyleS : EnemyS {
 
 			// veers off positive direction
 
-			Vector3	target3 = HowieS.H.transform.position;
+			Vector3	target3 = level.howie.GetComponent<HowieS>().transform.position;
 			target3.x += Random.Range(0.5f,1)*accuracyMult;
 			target3.y += Random.Range(0.5f,1)*accuracyMult;
 			

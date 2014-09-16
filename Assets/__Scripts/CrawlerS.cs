@@ -105,7 +105,7 @@ public class CrawlerS : EnemyS {
 
 		// if attacking, head straight for Howie!
 		if (attacking){
-			movTarget = HowieS.H.transform.position;
+			movTarget = level.howie.GetComponent<HowieS>().transform.position;
 
 			// count down attack time
 			attackDuration -= Time.deltaTime;
@@ -130,14 +130,14 @@ public class CrawlerS : EnemyS {
 				// if scared, run away from howie!
 				if (scared){
 					// change x of target
-					if (transform.position.x > HowieS.H.transform.position.x){
+					if (transform.position.x > level.howie.GetComponent<HowieS>().transform.position.x){
 						movTarget.x = transform.position.x+randomizeMovTargetMult*Random.insideUnitCircle.x;
 					}
 					else{
 						movTarget.x = transform.position.x-randomizeMovTargetMult*Random.insideUnitCircle.x;
 					}
 					// change y of target
-					if (transform.position.y > HowieS.H.transform.position.y){
+					if (transform.position.y > level.howie.GetComponent<HowieS>().transform.position.y){
 						movTarget.y = transform.position.y+randomizeMovTargetMult*Random.insideUnitCircle.y;
 					}
 					else{
@@ -149,8 +149,8 @@ public class CrawlerS : EnemyS {
 				else{
 					if (howieNearby){
 						// if howie is around, head towards him
-						movTarget.x = HowieS.H.transform.position.x + randomizeMovTargetMult*Random.insideUnitCircle.x;
-						movTarget.y = HowieS.H.transform.position.y + randomizeMovTargetMult*Random.insideUnitCircle.y;
+						movTarget.x = level.howie.GetComponent<HowieS>().transform.position.x + randomizeMovTargetMult*Random.insideUnitCircle.x;
+						movTarget.y = level.howie.GetComponent<HowieS>().transform.position.y + randomizeMovTargetMult*Random.insideUnitCircle.y;
 					}
 					else{
 						// if not scared and howie's not around, move idly and randomly!
@@ -197,8 +197,8 @@ public class CrawlerS : EnemyS {
 	void ManageVulnerability () {
 
 		//placing scared stuff in here too
-		float distanceToHowie = Vector3.Distance(new Vector3(HowieS.H.transform.position.x,
-		                                                     HowieS.H.transform.position.y,
+		float distanceToHowie = Vector3.Distance(new Vector3(level.howie.GetComponent<HowieS>().transform.position.x,
+		                                                     level.howie.GetComponent<HowieS>().transform.position.y,
 		                                                     transform.position.z), transform.position);
 		if (distanceToHowie < 30){
 			howieNearby = true;
@@ -310,18 +310,18 @@ public class CrawlerS : EnemyS {
 		// htting Howie!
 		if (other.gameObject.tag == "Player" && !beingThrown){
 			if (!beingHeld){
-			HowieS.H.TakeDamage(strength);
+				level.howie.GetComponent<HowieS>().TakeDamage(strength);
 			CameraShakeS.C.SmallShake();
 			CameraShakeS.C.TimeSleep(0.2f);
 
 				// give howie some knockback
 				
-				HowieS.H.KnockBack(knockBackTime);
+				level.howie.GetComponent<HowieS>().KnockBack(knockBackTime);
 
-				Vector3 howieFixPos = HowieS.H.transform.position;
+				Vector3 howieFixPos = level.howie.GetComponent<HowieS>().transform.position;
 				howieFixPos.z = transform.position.z;
 
-				HowieS.H.rigidbody.velocity = (howieFixPos - transform.position).normalized*howieKnockBackMult*Time.deltaTime;
+				level.howie.GetComponent<HowieS>().rigidbody.velocity = (howieFixPos - transform.position).normalized*howieKnockBackMult*Time.deltaTime;
 
 			// set time for reversing vel and reverse vel
 

@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class YarlaS : MonoBehaviour {
-
+	
 	public GameObject	holdTarget;
 	
 	public float		throwMultiplierX = 1000;
@@ -35,23 +35,23 @@ public class YarlaS : MonoBehaviour {
 
 	public float 		enemyCapturedZ;
 	
-	
-	//public static		YarlaS	Y;
+	public HowieS howie;
+	public static		YarlaS	Y;
 	
 	void Start () {
 		
-		//Y = this;
+		Y = this;
 		
 		velCountdown = velCountdownMax;
 		launchMaxCooldown = launchMaxTime;
 		
-		
+		howie = GameObject.FindGameObjectsWithTag ("Player") [0].GetComponent<HowieS> ();
 		
 	}
 
 	void FixedUpdate () {
 		// turn throw and grab off when just solo howie
-		if (!HowieS.H.isHowieSolo){
+		if (!howie.isHowieSolo){
 			
 			HoldEnemy ();
 			renderer.enabled = true;
@@ -130,8 +130,8 @@ public class YarlaS : MonoBehaviour {
 				}
 				else{
 					rigidbody.velocity = new Vector3
-						(launchSpeed*HowieS.H.handPos.x,
-						launchSpeed*HowieS.H.handPos.y,0)*Time.deltaTime/HowieS.H.maxHandRadius;
+						(launchSpeed*howie.handPos.x,
+						launchSpeed*howie.handPos.y,0)*Time.deltaTime/howie.maxHandRadius;
 				}
 				launchAxisDown = true;
 				launched = true;
@@ -149,8 +149,8 @@ public class YarlaS : MonoBehaviour {
 				}
 				else{
 					rigidbody.velocity = new Vector3
-						(launchSpeed*HowieS.H.handPos.x,
-						 launchSpeed*HowieS.H.handPos.y,0)*Time.deltaTime/HowieS.H.maxHandRadius;
+						(launchSpeed*howie.handPos.x,
+						 launchSpeed*howie.handPos.y,0)*Time.deltaTime/howie.maxHandRadius;
 				}
 				launchAxisDown = true;
 				launched = true;
@@ -229,11 +229,11 @@ public class YarlaS : MonoBehaviour {
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (maxThrowVel*HowieS.H.handPos.x,
-							                             maxThrowVel*HowieS.H.handPos.y, 0)*throwExceedMult
-								*Time.deltaTime*2/HowieS.H.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*throwExceedMult
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						HowieS.H.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
 						*Time.deltaTime*throwExceedMult,ForceMode.Impulse);
 						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 					}
@@ -244,11 +244,11 @@ public class YarlaS : MonoBehaviour {
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (maxThrowVel*HowieS.H.handPos.x,
-							                             maxThrowVel*HowieS.H.handPos.y, 0)*(holdTime/sweetSpot)
-								*Time.deltaTime*2/HowieS.H.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*(holdTime/sweetSpot)
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						HowieS.H.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
 						*Time.deltaTime*(holdTime/sweetSpot),ForceMode.Impulse);
 						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 						
@@ -256,7 +256,7 @@ public class YarlaS : MonoBehaviour {
 					
 					CameraShakeS.C.MicroShake();
 					holdTarget.rigidbody.velocity = throwVelocity;
-					HowieS.H.KnockBack(kickBackTime);
+					howie.KnockBack(kickBackTime);
 					//print(throwVelocity);
 					
 					launchAxisDown = false;
@@ -288,11 +288,11 @@ public class YarlaS : MonoBehaviour {
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (maxThrowVel*HowieS.H.handPos.x,
-							                             maxThrowVel*HowieS.H.handPos.y, 0)*throwExceedMult
-								*Time.deltaTime*2/HowieS.H.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*throwExceedMult
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						HowieS.H.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
 						                            *Time.deltaTime*throwExceedMult,ForceMode.Impulse);
 						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 					}
@@ -303,11 +303,11 @@ public class YarlaS : MonoBehaviour {
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (maxThrowVel*HowieS.H.handPos.x,
-							                             maxThrowVel*HowieS.H.handPos.y, 0)*(holdTime/sweetSpot)
-								*Time.deltaTime*2/HowieS.H.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*(holdTime/sweetSpot)
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						HowieS.H.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
 						                            *Time.deltaTime*(holdTime/sweetSpot),ForceMode.Impulse);
 						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 						
@@ -315,7 +315,7 @@ public class YarlaS : MonoBehaviour {
 					
 					CameraShakeS.C.MicroShake();
 					holdTarget.rigidbody.velocity = throwVelocity;
-					HowieS.H.KnockBack(kickBackTime);
+					howie.KnockBack(kickBackTime);
 					//print(throwVelocity);
 					
 					launchAxisDown = false;
@@ -373,7 +373,7 @@ public class YarlaS : MonoBehaviour {
 		
 		rigidbody.velocity = Vector3.zero;
 		//print ("MOVED!");
-		transform.position = HowieS.H.transform.position;
+		transform.position = howie.transform.position;
 		launchMaxCooldown = launchMaxTime;
 		launched = false;
 		

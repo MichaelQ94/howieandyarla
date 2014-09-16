@@ -17,12 +17,11 @@ public class EnemyDetectS : MonoBehaviour {
 
 	public GameObject	enemyToChomp;
 
-	public YarlaS yarla;
-
+	public LevelS level;
 	// Use this for initialization
 	void Start () {
-		yarla = GameObject.FindGameObjectWithTag ("YarlaS").GetComponent<YarlaS>();
-	
+
+		level = (GameObject.FindGameObjectsWithTag("Level")[0]).GetComponent<LevelS>();
 	}
 	
 	// Update is called once per frame
@@ -44,7 +43,12 @@ public class EnemyDetectS : MonoBehaviour {
 		// 3. Enemy closest to chompy head
 
 		// first find held enemy if any
-		enemyBeingHeld = yarla.holdTarget;
+		if (YarlaS.Y.holdTarget != null){
+			enemyBeingHeld = YarlaS.Y.holdTarget;
+		}
+		else{
+			enemyBeingHeld = null;
+		}
 
 		if (shortestDistance < dangerDistance || enemyBeingHeld == null){
 			enemyToChomp = closestEnemy;
@@ -73,7 +77,7 @@ public class EnemyDetectS : MonoBehaviour {
 			Vector3 enemyPos = enemiesInRange[i].transform.position;
 			enemyPos.z = NewChompS.N.transform.position.z;
 
-			float distToHowie = Vector3.Distance(enemyPos,HowieS.H.transform.position);
+			float distToHowie = Vector3.Distance(enemyPos,level.howie.GetComponent<HowieS>().transform.position);
 
 			if (distToHowie < shortestDistance || shortestDistance == 0){
 				shortestDistance = distToHowie;

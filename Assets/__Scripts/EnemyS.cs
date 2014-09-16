@@ -43,15 +43,20 @@ public class EnemyS : MonoBehaviour {
 	public bool beingHeld = false;
 
 	public int originalPhysicsLayer;
+
+	public LevelS level;
 	
 	// Use this for initialization
 	public void EnemyStart () {
-
+		level = (GameObject.FindGameObjectsWithTag("Level")[0]).GetComponent<LevelS>();
+		// access howie with level.howie.GetComponent<HowieS>()
 		enemyHealth = maxHealth;
 		originalPhysicsLayer = gameObject.layer;
 		//print (originalPhysicsLayer);
 
 	}
+
+
 	
 	// Update is called once per frame
 	public void UpdateEnemy () {

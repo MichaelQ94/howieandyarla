@@ -81,18 +81,18 @@ public class HeavyEnemyS : EnemyS {
 
 	// check if howie is in attack range
 	public bool isHowieAround(){
-
-		float howieDistance = Vector3.Distance(new Vector3(HowieS.H.transform.position.x,
-		                                                     HowieS.H.transform.position.y,
-		                                                     transform.position.z), transform.position);
-
+		
+		float howieDistance = Vector3.Distance(new Vector3(level.howie.GetComponent<HowieS>().transform.position.x,
+		                                                   level.howie.GetComponent<HowieS>().transform.position.y,
+		                                                   transform.position.z), transform.position);
+		
 		if (howieDistance < attackDistanceMin){
 			return true;
 		}
 		else{
 			return false;
 		}
-
+		
 	}
 
 	void WalkAround () {
@@ -117,7 +117,7 @@ public class HeavyEnemyS : EnemyS {
 					// if howie not around, move towards general vicinity
 				else{
 	
-					moveTarget = HowieS.H.transform.position;
+					moveTarget = level.howie.GetComponent<HowieS>().transform.position;
 					
 					moveTarget.x += Random.insideUnitCircle.x*walkTargetRandomizationMult/2;
 					moveTarget.y += Random.insideUnitCircle.y*walkTargetRandomizationMult/2;
@@ -211,7 +211,7 @@ public class HeavyEnemyS : EnemyS {
 							attackDuration = attackDurationMax;
 
 							// set attack target and velocity at time of charge complete
-							attackTarget = HowieS.H.transform.position;
+							attackTarget = level.howie.GetComponent<HowieS>().transform.position;
 							attackTarget.z = transform.position.z;
 
 							attackingVel = (attackTarget - transform.position).normalized*chargeSpeed;
@@ -268,18 +268,18 @@ public class HeavyEnemyS : EnemyS {
 		// htting Howie!
 		if (other.gameObject.tag == "Player" && !beingThrown){
 			if (!beingHeld){
-				HowieS.H.TakeDamage(strength);
+				level.howie.GetComponent<HowieS>().TakeDamage(strength);
 				CameraShakeS.C.SmallShake();
 				CameraShakeS.C.TimeSleep(0.2f);
 				
 				// give howie some knockback
 				
-				HowieS.H.KnockBack(knockBackTime);
+				level.howie.GetComponent<HowieS>().KnockBack(knockBackTime);
 				
-				Vector3 howieFixPos = HowieS.H.transform.position;
+				Vector3 howieFixPos = level.howie.GetComponent<HowieS>().transform.position;
 				howieFixPos.z = transform.position.z;
 				
-				HowieS.H.rigidbody.velocity = (howieFixPos - transform.position).normalized*howieKnockBackMult*Time.deltaTime;
+				level.howie.GetComponent<HowieS>().rigidbody.velocity = (howieFixPos - transform.position).normalized*howieKnockBackMult*Time.deltaTime;
 
 			}
 		}

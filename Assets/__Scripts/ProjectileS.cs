@@ -31,13 +31,13 @@ public class ProjectileS : MonoBehaviour {
 	void OnTriggerEnter (Collider other) {
 
 		if (other.gameObject.tag == "Player"){
-
+			HowieS howie = other.gameObject.GetComponent<HowieS>();
 			CameraShakeS.C.SmallShake();
-			HowieS.H.TakeDamage(strength); // damage Howie
+			howie.TakeDamage(strength); // damage Howie
 			CameraShakeS.C.TimeSleep(0.2f);
 			Destroy(gameObject);
-			HowieS.H.KnockBack(knockBackTime);
-			HowieS.H.rigidbody.velocity = rigidbody.velocity*howieKnockBackMult;
+			howie.KnockBack(knockBackTime);
+			howie.rigidbody.velocity = rigidbody.velocity*howieKnockBackMult;
 
 		}
 
