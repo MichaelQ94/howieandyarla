@@ -29,6 +29,7 @@ public class EnemyS : MonoBehaviour {
 
 	public bool 	invulnerable = false; // when true, don't take damage
 	public bool 	cannotBeHeld = false; // when true, can't be grabbed by Yarla
+	public bool 	cannotBeAbsorbed = false;
 
 	public Material	deadMat;
 
@@ -43,6 +44,8 @@ public class EnemyS : MonoBehaviour {
 	public bool beingHeld = false;
 
 	public int originalPhysicsLayer;
+
+	public int nutritionValue = 25; //
 
 	public LevelS level;
 	
@@ -72,6 +75,7 @@ public class EnemyS : MonoBehaviour {
 			collider.enabled = false;
 
 		}
+
 		
 	}
 	
@@ -207,6 +211,22 @@ public class EnemyS : MonoBehaviour {
 		else{
 			enemyHealth -= damage;
 		}
+		}
+
+	}
+
+	// method to return if enemy can be absorbed by chompy head
+
+	public bool CanBeAbsorbed(){
+
+		if (cannotBeAbsorbed){
+			return false;
+		}
+		else if (knockedOut || (enemyHealth < maxHealth*0.3f)){
+			return true;
+		}
+		else{
+			return false;
 		}
 
 	}

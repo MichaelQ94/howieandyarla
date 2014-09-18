@@ -59,6 +59,7 @@ public class YarlaS : MonoBehaviour {
 		}
 		else{
 			renderer.enabled = false;
+			ResetPosition();
 		}
 	}
 	
@@ -104,6 +105,13 @@ public class YarlaS : MonoBehaviour {
 		if (other.gameObject == holdTarget && !holding){
 			holdTarget = null;
 		}
+		
+	}
+
+	void ResetPosition () {
+	
+		transform.localPosition = Vector3.zero;
+
 		
 	}
 	

@@ -45,8 +45,19 @@ public class HowieS : MonoBehaviour {
 	public bool 		facingRight = true; // facing left or right?
 	
 	public static float maxHealth = 100; // max health for Howie
+	public float overchargeHealth = 200; // overcharge health for howie
 	public static float health = 100; // Howie's health
 	public string	gameOverScene; // name of game over scene
+
+	// these vars concern dynamic health system
+	public float healthRecoverRate = 20;
+	public float overChargeDiminishRate = 10;
+	public float diminishRateHowieMult = 0.5f;
+
+	public float lastTimeHit;
+	public float timeToTriggerRecover = 3;
+
+	public bool inCombat = true;
 	
 	// Use this for initialization
 	void Start () {
@@ -69,6 +80,7 @@ public class HowieS : MonoBehaviour {
 		Walk ();
 		MoveHand ();
 		Animate();
+		UpdateHealth();
 		
 		
 		
@@ -327,6 +339,9 @@ public class HowieS : MonoBehaviour {
 		// we can also use this to set a consistent screen shake & time sleep if we so desire
 		
 		health -= damageAmount;
+
+		// set lastTimeHit to current time
+		lastTimeHit = Time.time;
 		
 		// I'm also going to include a death state trigger here
 		//though we may find we want to change how this works later
@@ -363,7 +378,7 @@ public class HowieS : MonoBehaviour {
 						isHowieSolo=!isHowieSolo;
 						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
 						//deactivates/activates chomping ability based on whether howie is solo
-						chompers.SetActive(isHowieSolo);
+						chompers.renderer.enabled = !isHowieSolo;
 						// always reset current frame to ensure no errors
 						currentWalkSprite = 0;
 					}
@@ -373,13 +388,10 @@ public class HowieS : MonoBehaviour {
 				    Application.platform == RuntimePlatform.WindowsPlayer ||
 				    Application.platform == RuntimePlatform.WindowsWebPlayer){
 					if (Input.GetButtonDown("SwitchCharPC")){
-						if (isHowieSolo){
-							isHowieSolo = false;
-						}
-						else{
-							isHowieSolo = true;
-						}
-						
+						isHowieSolo=!isHowieSolo;
+						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+						//deactivates/activates chomping ability based on whether howie is solo
+						chompers.renderer.enabled = !isHowieSolo;
 						// always reset current frame to ensure no errors
 						currentWalkSprite = 0;
 					}
@@ -402,6 +414,63 @@ public class HowieS : MonoBehaviour {
 			}
 		}
 		
+	}
+
+	public void GainAbsorbStats (float recoverHealth) {
+
+		health += recoverHealth;
+		//print ("ABSORB");
+
+	}
+
+	void UpdateHealth () {
+
+		// if in combat, utilize health system
+		if (inCombat){
+
+			// if health is greater than max, slowly decrease
+			if (health > maxHealth+1){
+
+				// if over overcharge health, fix
+				if (health > overchargeHealth){
+					health = overchargeHealth;
+				}
+
+				// diminish overcharge based on Howie status
+				if (isHowieSolo){
+					health -= overChargeDiminishRate*diminishRateHowieMult*Time.deltaTime;
+				}
+				else{
+					health -= overChargeDiminishRate*Time.deltaTime;
+				}
+
+			}
+
+			if (health < maxHealth - 1){
+
+				// start recovering health on certain timer after x time not getting hit
+				if ((Time.time - lastTimeHit) > timeToTriggerRecover){
+					health += healthRecoverRate*Time.deltaTime;
+				}
+
+			}
+			else{
+				health = maxHealth;
+			}
+
+		}
+		// if not in combat, recover health to max
+		else{
+
+			if (health < maxHealth){
+				health += healthRecoverRate*Time.deltaTime;
+			}
+			else{
+				health = maxHealth;
+			}
+
+		}
+
 	}
 	
 	public void GameOver (){

@@ -62,7 +62,8 @@ public class NewChompS : MonoBehaviour {
 		// chomp should not work when we are just solo howie!
 		// turn this on and off appropriately
 		
-		if (!howie.isHowieSolo){			renderer.enabled = true;
+		if (!howie.isHowieSolo){			
+			renderer.enabled = true;
 
 			MoveChompHead();
 			ChompAttack(); // method for charging chomp attack
@@ -76,6 +77,7 @@ public class NewChompS : MonoBehaviour {
 			renderer.enabled = false;
 
 			ResetChomp();
+			ResetPosition();
 			
 		}
 		
@@ -104,6 +106,12 @@ public class NewChompS : MonoBehaviour {
 
 		}
 
+	}
+
+	void ResetPosition () {
+
+		transform.localPosition = Vector3.zero;
+		
 	}
 
 	void MoveChompHead () {
@@ -220,7 +228,7 @@ public class NewChompS : MonoBehaviour {
 					// this is the code that actually triggers the attack
 					if (chompTarget != null){
 						
-						
+						EnemyS targetEnemyScript = chompTarget.GetComponent<EnemyS>();
 						
 						Vector3	attackPos = chompTarget.transform.position;
 						attackPos.z = transform.position.z;
@@ -236,8 +244,14 @@ public class NewChompS : MonoBehaviour {
 						// set charge delay to prevent double attacks
 						chargeDelay = chargeDelayMax;
 
-						// Damage held enemy
-						DamageEnemy(chompTarget.GetComponent<EnemyS>());
+						// absorb enemy if charged and enemy is stunned/weakened
+						if (targetEnemyScript.CanBeAbsorbed()){
+							AbsorbEnemy(targetEnemyScript);
+						}
+						// Damage held enemy if not absorbable
+						else{
+							DamageEnemy(targetEnemyScript);
+						}
 					}
 				}
 				
@@ -439,6 +453,18 @@ public class NewChompS : MonoBehaviour {
 
 
 		
+	}
+
+	void AbsorbEnemy(EnemyS attackTarget){
+
+		attackTarget.enemyHealth = 0;
+		attackTarget.renderer.enabled = false;
+
+		howie.GainAbsorbStats(attackTarget.nutritionValue);
+
+		CameraShakeS.C.LargeShake(); // shake and sleep camera for added effect
+		CameraShakeS.C.TimeSleep(chompPauseTime);
+
 	}
 	
 	void ResetChomp () {
