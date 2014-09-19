@@ -64,6 +64,7 @@ public class NewChompS : MonoBehaviour {
 		
 		if (!howie.isHowieSolo){			
 			renderer.enabled = true;
+			collider.enabled = true;
 
 			MoveChompHead();
 			ChompAttack(); // method for charging chomp attack
@@ -75,6 +76,7 @@ public class NewChompS : MonoBehaviour {
 		else{
 
 			renderer.enabled = false;
+			collider.enabled = false;
 
 			ResetChomp();
 			ResetPosition();

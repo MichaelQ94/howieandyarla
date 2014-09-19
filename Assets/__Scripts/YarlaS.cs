@@ -55,10 +55,12 @@ public class YarlaS : MonoBehaviour {
 			
 			HoldEnemy ();
 			renderer.enabled = true;
+			collider.enabled = true;
 			
 		}
 		else{
 			renderer.enabled = false;
+			collider.enabled = false;
 			ResetPosition();
 		}
 	}
