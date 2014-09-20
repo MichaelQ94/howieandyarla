@@ -446,7 +446,7 @@ public class HowieS : MonoBehaviour {
 
 			}
 
-			if (health < maxHealth - 1){
+			else if (health < maxHealth - 1){
 
 				// start recovering health on certain timer after x time not getting hit
 				if ((Time.time - lastTimeHit) > timeToTriggerRecover){

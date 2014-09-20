@@ -31,6 +31,8 @@ public class EnemyS : MonoBehaviour {
 	public bool 	cannotBeHeld = false; // when true, can't be grabbed by Yarla
 	public bool 	cannotBeAbsorbed = false;
 
+	public GameObject	shadow;
+
 	public Material	deadMat;
 
 	public Texture deadTexture;
@@ -70,9 +72,12 @@ public class EnemyS : MonoBehaviour {
 		CheckDeath();
 
 		if (isDead){
+
 			renderer.material = deadMat;
 			rigidbody.isKinematic = true;
 			collider.enabled = false;
+
+			shadow.renderer.enabled = renderer.enabled;
 
 		}
 
@@ -133,13 +138,26 @@ public class EnemyS : MonoBehaviour {
 				hitStunned=false;
 			}
 		}
+
+		if (beingHeld){
+	
+			shadow.renderer.enabled = false;
+
+		}
+		else{
+			shadow.renderer.enabled = renderer.enabled;
+		}
 		
 		if (knockedOut){
+
+			//print (CanBeAbsorbed());
 
 			if (!isDead){
 			birdies.renderer.enabled = true;
 			}
-			stunCountdown -= Time.deltaTime;
+			if (!beingHeld){
+				stunCountdown -= Time.deltaTime;
+			}
 			if (stunCountdown <= 0){
 				knockedOut = false;
 			}
@@ -205,7 +223,7 @@ public class EnemyS : MonoBehaviour {
 		if (beingHeld){
 			enemyHealth -= damage*NewChompS.N.holdingDamageMult;
 		}
-		else if (knockedOut){
+		else if (knockedOut || enemyHealth <= maxHealth/2){
 			enemyHealth -= damage*NewChompS.N.stunnedDamageMult;
 		}
 		else{
@@ -222,7 +240,7 @@ public class EnemyS : MonoBehaviour {
 		if (cannotBeAbsorbed){
 			return false;
 		}
-		else if (knockedOut || (enemyHealth < maxHealth*0.3f)){
+		else if (knockedOut){
 			return true;
 		}
 		else{

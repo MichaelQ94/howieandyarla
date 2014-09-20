@@ -44,6 +44,9 @@ public class NewChompS : MonoBehaviour {
 	public float holdingDamageMult = 2;
 	public float stunnedDamageMult = 1.5f;
 
+	public float pleaseGetRidOfThisSomehowSoon;
+	public float timeToTriggerChomp = 3;
+
 	public HowieS howie;
 
 	
@@ -58,6 +61,11 @@ public class NewChompS : MonoBehaviour {
 	
 	// update every physics step
 	void FixedUpdate () {
+
+		//print (pleaseGetRidOfThisSomehowSoon);
+		if (timeHeld > 0){
+			pleaseGetRidOfThisSomehowSoon = timeHeld;
+		}
 		
 		// chomp should not work when we are just solo howie!
 		// turn this on and off appropriately
@@ -247,7 +255,7 @@ public class NewChompS : MonoBehaviour {
 						chargeDelay = chargeDelayMax;
 
 						// absorb enemy if charged and enemy is stunned/weakened
-						if (targetEnemyScript.CanBeAbsorbed()){
+						if (targetEnemyScript.CanBeAbsorbed() && pleaseGetRidOfThisSomehowSoon > timeToTriggerChomp){
 							AbsorbEnemy(targetEnemyScript);
 						}
 						// Damage held enemy if not absorbable
@@ -288,10 +296,11 @@ public class NewChompS : MonoBehaviour {
 				
 						timeHeld += Time.deltaTime;
 
+
 					}
 
 				//perform initial attack 
-					if (!attacking){
+				if (!attacking && chompTarget != enemyDetector.enemyBeingHeld){
 
 						if (!charging && chompTarget != null){
 
@@ -356,19 +365,16 @@ public class NewChompS : MonoBehaviour {
 					
 					timeHeld += Time.deltaTime;
 					
+					
 				}
 				
 				//perform initial attack 
-				if (!attacking){
+				if (!attacking && chompTarget != enemyDetector.enemyBeingHeld){
 					
 					if (!charging && chompTarget != null){
 						
-						
 						attackTime = 0;
 						attacking = true;
-						
-						// set charge delay to prevent double attack
-						//chargeDelay = chargeDelayMax;
 						
 					}
 				}
@@ -392,7 +398,8 @@ public class NewChompS : MonoBehaviour {
 					if (timeHeld > 0){
 						
 						// only attack if there's a target and chompDelay is over
-						if (chompTarget != null && chargeDelay <= 0){
+						if (chompTarget != null){
+							
 							
 							attackTime = 0;
 							attacking = true;
@@ -430,7 +437,7 @@ public class NewChompS : MonoBehaviour {
 
 			if (timeHeld <= chompSpot){
 
-				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, minDamage*maxDamageMult*(timeHeld/chompSpot));
+				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, minDamage*maxDamageMult*(pleaseGetRidOfThisSomehowSoon/chompSpot));
 
 			}
 			else{
@@ -463,6 +470,8 @@ public class NewChompS : MonoBehaviour {
 		attackTarget.renderer.enabled = false;
 
 		howie.GainAbsorbStats(attackTarget.nutritionValue);
+
+		print ("ABSORB!");
 
 		CameraShakeS.C.LargeShake(); // shake and sleep camera for added effect
 		CameraShakeS.C.TimeSleep(chompPauseTime);

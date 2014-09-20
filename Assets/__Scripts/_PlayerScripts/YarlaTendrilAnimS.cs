@@ -38,7 +38,7 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 
 		Vector3	fixScale = transform.localScale;
 		float fixScaleDist = Vector3.Distance(new Vector3(targetHead.localPosition.x,targetHead.localPosition.y,transform.localPosition.z),
-		                                      transform.localPosition);
+		                                      transform.localPosition) + 0.25f;
 		fixScale.x = fixScale.y = fixScaleDist;
 		transform.localScale = fixScale;
 
