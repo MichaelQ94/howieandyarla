@@ -36,11 +36,10 @@ public class YarlaS : MonoBehaviour {
 	public float 		enemyCapturedZ;
 	
 	public HowieS howie;
-	public static		YarlaS	Y;
+
+	public NewChompS	chompHead;
 	
 	void Start () {
-		
-		Y = this;
 		
 		velCountdown = velCountdownMax;
 		launchMaxCooldown = launchMaxTime;
@@ -56,6 +55,7 @@ public class YarlaS : MonoBehaviour {
 			HoldEnemy ();
 			renderer.enabled = true;
 			collider.enabled = true;
+
 			
 		}
 		else{
@@ -75,10 +75,10 @@ public class YarlaS : MonoBehaviour {
 
 				if (!other.gameObject.GetComponent<EnemyS>().isDead && 
 				    !other.gameObject.GetComponent<EnemyS>().cannotBeHeld){
-
 					holdTarget = other.gameObject;
+					chompHead.timeToTriggerChomp = other.GetComponent<EnemyS>().requiredAbsorbTime;
 					//CameraShakeS.C.TimeSleep(grabTimeSleep);
-				
+
 				}
 			}
 			
@@ -87,6 +87,7 @@ public class YarlaS : MonoBehaviour {
 				    !other.gameObject.GetComponent<EnemyS>().cannotBeHeld){
 					
 					holdTarget = other.gameObject;
+					chompHead.timeToTriggerChomp = other.GetComponent<EnemyS>().requiredAbsorbTime;
 					//CameraShakeS.C.TimeSleep(grabTimeSleep);
 					
 				}

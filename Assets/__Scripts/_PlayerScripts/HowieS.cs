@@ -58,6 +58,13 @@ public class HowieS : MonoBehaviour {
 	public float timeToTriggerRecover = 3;
 
 	public bool inCombat = true;
+
+	public int blueEnergyAmt = 0;
+	public int redEnergyAmt = 0;
+	public int purpleEnergyAmt = 0;
+
+	public YarlaS	yarla;
+
 	
 	// Use this for initialization
 	void Start () {
@@ -180,7 +187,7 @@ public class HowieS : MonoBehaviour {
 				charVel.y = Input.GetAxis("VerticalMac")*maxSpeed*Time.deltaTime;
 			}
 			
-			if (YarlaS.Y.holding){
+			if (yarla.holding){
 				charVel *= chargeSpeedMultiplier;
 			}
 			
@@ -213,8 +220,8 @@ public class HowieS : MonoBehaviour {
 		float mouseDistance = Vector3.Distance(transform.position,mousePos);
 		
 		
-		if (!YarlaS.Y.launched){
-			if (!YarlaS.Y.holding){
+		if (!yarla.launched){
+			if (!yarla.holding){
 				if (inputNumber > 0){
 					if (Application.platform == RuntimePlatform.OSXEditor || 
 					    Application.platform == RuntimePlatform.OSXPlayer ||
@@ -359,7 +366,7 @@ public class HowieS : MonoBehaviour {
 		
 		// for simplicity's sake, currently you can NOT switch while holding an enemy
 		
-		if (!YarlaS.Y.holding){
+		if (!yarla.holding){
 			
 			// check for platform and switch at button press (A on controller, shift on key)
 			
@@ -416,10 +423,20 @@ public class HowieS : MonoBehaviour {
 		
 	}
 
-	public void GainAbsorbStats (float recoverHealth) {
+	public void GainAbsorbStats (float recoverHealth, int energyType, int EnergyAmt) {
 
 		health += recoverHealth;
 		//print ("ABSORB");
+
+		if (energyType == 0){
+			blueEnergyAmt += EnergyAmt;
+		}
+		if (energyType == 1){
+			redEnergyAmt += EnergyAmt;
+		}
+		if (energyType == 2){
+			purpleEnergyAmt += EnergyAmt;
+		}
 
 	}
 

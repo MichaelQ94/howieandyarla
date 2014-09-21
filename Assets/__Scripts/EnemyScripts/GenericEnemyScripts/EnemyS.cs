@@ -31,6 +31,8 @@ public class EnemyS : MonoBehaviour {
 	public bool 	cannotBeHeld = false; // when true, can't be grabbed by Yarla
 	public bool 	cannotBeAbsorbed = false;
 
+	public float 	requiredAbsorbTime = 2;
+
 	public GameObject	shadow;
 
 	public Material	deadMat;
@@ -47,13 +49,24 @@ public class EnemyS : MonoBehaviour {
 
 	public int originalPhysicsLayer;
 
-	public int nutritionValue = 25; //
+	public int nutritionValue = 25;
+	public int energyType = 0; // 0 is colorA, 1 is colorB, 2 is colorC (blue, red, purple?)
+	public int energyAmount = 0; // amount to give for metamorphosis
+
+	public float lowHealthMult = 0.5f; // triggers low health threshold
+
+	public float breakOutTime = 2;
+	public float breakOutTimeMax = 2;
+	public float breakOutSpeed = 500;
+
+	public NewChompS	chompy;
 
 	public LevelS level;
 	
 	// Use this for initialization
 	public void EnemyStart () {
 		level = (GameObject.FindGameObjectsWithTag("Level")[0]).GetComponent<LevelS>();
+		chompy = (GameObject.FindGameObjectsWithTag("Yarla")[0]).GetComponent<NewChompS>();
 		// access howie with level.howie.GetComponent<HowieS>()
 		enemyHealth = maxHealth;
 		originalPhysicsLayer = gameObject.layer;
@@ -74,6 +87,7 @@ public class EnemyS : MonoBehaviour {
 		if (isDead){
 
 			renderer.material = deadMat;
+			birdies.renderer.enabled = false;
 			rigidbody.isKinematic = true;
 			collider.enabled = false;
 
@@ -142,6 +156,9 @@ public class EnemyS : MonoBehaviour {
 		if (beingHeld){
 	
 			shadow.renderer.enabled = false;
+			if (!knockedOut){
+				breakOutTime -= Time.deltaTime;
+			}
 
 		}
 		else{
@@ -155,17 +172,21 @@ public class EnemyS : MonoBehaviour {
 			if (!isDead){
 			birdies.renderer.enabled = true;
 			}
-			if (!beingHeld){
-				stunCountdown -= Time.deltaTime;
-			}
+
+			stunCountdown -= Time.deltaTime;
+
 			if (stunCountdown <= 0){
 				knockedOut = false;
 			}
 			
 		}
 		else{
-			
-			birdies.renderer.enabled = false;
+			if (inWeakenedState()){
+				birdies.renderer.enabled = true;
+			}
+			else{
+				birdies.renderer.enabled = false;
+			}
 			
 		}
 
@@ -221,10 +242,10 @@ public class EnemyS : MonoBehaviour {
 		// mult damage depending on stun or held state
 
 		if (beingHeld){
-			enemyHealth -= damage*NewChompS.N.holdingDamageMult;
+			enemyHealth -= damage*chompy.holdingDamageMult;
 		}
 		else if (knockedOut || enemyHealth <= maxHealth/2){
-			enemyHealth -= damage*NewChompS.N.stunnedDamageMult;
+			enemyHealth -= damage*chompy.stunnedDamageMult;
 		}
 		else{
 			enemyHealth -= damage;
@@ -241,6 +262,20 @@ public class EnemyS : MonoBehaviour {
 			return false;
 		}
 		else if (knockedOut){
+			return true;
+		}
+		else if (inWeakenedState()){
+			return true;
+		}
+		else{
+			return false;
+		}
+
+	}
+
+	public bool inWeakenedState(){
+
+		if (enemyHealth <= maxHealth*lowHealthMult){
 			return true;
 		}
 		else{

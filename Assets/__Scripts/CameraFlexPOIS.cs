@@ -3,6 +3,9 @@ using System.Collections;
 
 public class CameraFlexPOIS : MonoBehaviour {
 
+	public YarlaS	yarla;
+	public NewChompS chompHead;
+
 	public GameObject howie;
 	// Update is called once per frame
 
@@ -17,7 +20,7 @@ public class CameraFlexPOIS : MonoBehaviour {
 			transform.position = howie.GetComponent<HowieS>().transform.position;
 		}
 		else{
-			transform.position = (NewChompS.N.transform.position + YarlaS.Y.transform.position)/2;
+			transform.position = (chompHead.transform.position + yarla.transform.position)/2;
 		}
 	
 	}

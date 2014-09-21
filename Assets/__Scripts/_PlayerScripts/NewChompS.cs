@@ -10,7 +10,6 @@ public class NewChompS : MonoBehaviour {
 	public bool		charging = false; // true if player is charging chomp attack
 	public float	timeHeld = 0; // how long in sec chomp has charged
 	public float	exceedMult = 0.75f; // damage reduction if player holds chomp past sweet spot
-	public float	chompSpot = 0.6f; // sweet spot time in sec
 
 	public float 	chargeDelay; // offset charge start by small amount of time to prevent double attacks
 	public float 	chargeDelayMax = 0.25f; // what to set charge delay to whenever one attacks
@@ -22,8 +21,6 @@ public class NewChompS : MonoBehaviour {
 	public EnemyDetectS	enemyDetector; // keeps track on enemies in radius
 	
 	public float 	chompPauseTime = 0.004f; // sleep time in sec for a chomp attack
-
-	public static NewChompS	N; // singleton "N" for new
 
 	public float radiusMult = 0.25f;
 
@@ -44,15 +41,14 @@ public class NewChompS : MonoBehaviour {
 	public float holdingDamageMult = 2;
 	public float stunnedDamageMult = 1.5f;
 
-	public float pleaseGetRidOfThisSomehowSoon;
-	public float timeToTriggerChomp = 3;
+	public float capturedTimeHeld;
+	public float timeToTriggerChomp = 3; 
 
 	public HowieS howie;
 
 	
 	// Use this for initialization
 	void Start () {
-		N = this;
 
 		howie = GameObject.FindGameObjectsWithTag ("Player") [0].GetComponent<HowieS> ();
 
@@ -62,9 +58,9 @@ public class NewChompS : MonoBehaviour {
 	// update every physics step
 	void FixedUpdate () {
 
-		//print (pleaseGetRidOfThisSomehowSoon);
+		//print (capturedTimeHeld);
 		if (timeHeld > 0){
-			pleaseGetRidOfThisSomehowSoon = timeHeld;
+			capturedTimeHeld = timeHeld;
 		}
 		
 		// chomp should not work when we are just solo howie!
@@ -72,6 +68,15 @@ public class NewChompS : MonoBehaviour {
 		
 		if (!howie.isHowieSolo){			
 			renderer.enabled = true;
+
+			//have head facing appropriate way
+			if (transform.localPosition.x < 0){
+				renderer.material.SetTextureScale("_MainTex", new Vector2(1, -1));
+			}
+			else{
+				renderer.material.SetTextureScale("_MainTex", new Vector2(-1,-1));
+			}
+
 			collider.enabled = true;
 
 			MoveChompHead();
@@ -128,6 +133,9 @@ public class NewChompS : MonoBehaviour {
 
 		if (!attacking){
 
+			// turn off collider while not attacking
+			collider.enabled = false;
+
 		// accept input for proper platform (mac vs pc)
 		if (Application.platform == RuntimePlatform.OSXEditor || 
 		    Application.platform == RuntimePlatform.OSXPlayer ||
@@ -159,6 +167,9 @@ public class NewChompS : MonoBehaviour {
 
 		}
 
+		}
+		else{
+			collider.enabled = true;
 		}
 
 
@@ -255,7 +266,7 @@ public class NewChompS : MonoBehaviour {
 						chargeDelay = chargeDelayMax;
 
 						// absorb enemy if charged and enemy is stunned/weakened
-						if (targetEnemyScript.CanBeAbsorbed() && pleaseGetRidOfThisSomehowSoon > timeToTriggerChomp){
+						if (targetEnemyScript.CanBeAbsorbed() && capturedTimeHeld > timeToTriggerChomp){
 							AbsorbEnemy(targetEnemyScript);
 						}
 						// Damage held enemy if not absorbable
@@ -274,7 +285,7 @@ public class NewChompS : MonoBehaviour {
 		}
 
 		// change color when at sweetSpot
-		if (timeHeld >= chompSpot-0.3f && timeHeld <= chompSpot){
+		if (timeHeld >= timeToTriggerChomp-0.1f && timeHeld <= timeToTriggerChomp+0.1f){
 			renderer.material = sweetSpotMat;
 		}
 		else{
@@ -435,9 +446,9 @@ public class NewChompS : MonoBehaviour {
 		// if timeHeld is greater than zero, this is not the initial attack
 		if (timeHeld > 0){
 
-			if (timeHeld <= chompSpot){
+			if (timeHeld <= timeToTriggerChomp){
 
-				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, minDamage*maxDamageMult*(pleaseGetRidOfThisSomehowSoon/chompSpot));
+				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, minDamage*maxDamageMult*(capturedTimeHeld/timeToTriggerChomp));
 
 			}
 			else{
@@ -469,9 +480,9 @@ public class NewChompS : MonoBehaviour {
 		attackTarget.enemyHealth = 0;
 		attackTarget.renderer.enabled = false;
 
-		howie.GainAbsorbStats(attackTarget.nutritionValue);
+		howie.GainAbsorbStats(attackTarget.nutritionValue, attackTarget.energyType, attackTarget.energyAmount);
 
-		print ("ABSORB!");
+		//print ("ABSORB!");
 
 		CameraShakeS.C.LargeShake(); // shake and sleep camera for added effect
 		CameraShakeS.C.TimeSleep(chompPauseTime);

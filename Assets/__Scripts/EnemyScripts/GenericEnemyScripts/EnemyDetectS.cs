@@ -15,6 +15,9 @@ public class EnemyDetectS : MonoBehaviour {
 	public float 		shortestDistance;
 	public float 		dangerDistance = 2;
 
+	public YarlaS		yarla;
+	public NewChompS	chompy;
+
 	public GameObject	enemyToChomp;
 
 	public LevelS level;
@@ -43,8 +46,8 @@ public class EnemyDetectS : MonoBehaviour {
 		// 3. Enemy closest to chompy head
 
 		// first find held enemy if any
-		if (YarlaS.Y.holdTarget != null){
-			enemyBeingHeld = YarlaS.Y.holdTarget;
+		if (yarla.holdTarget != null){
+			enemyBeingHeld = yarla.holdTarget;
 		}
 		else{
 			enemyBeingHeld = null;
@@ -75,7 +78,7 @@ public class EnemyDetectS : MonoBehaviour {
 		for (int i = 0; i < enemiesInRange.Count; i++){
 
 			Vector3 enemyPos = enemiesInRange[i].transform.position;
-			enemyPos.z = NewChompS.N.transform.position.z;
+			enemyPos.z = chompy.transform.position.z;
 
 			float distToHowie = Vector3.Distance(enemyPos,level.howie.GetComponent<HowieS>().transform.position);
 
