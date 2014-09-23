@@ -71,6 +71,7 @@ public class HowieS : MonoBehaviour {
 
 		kickBackCountdown = kickBackMax;
 		walkCycleRateCountdown = walkCycleRate;
+		yarla = GameObject.FindGameObjectsWithTag ("YarlaS") [0].GetComponent<YarlaS> ();
 		
 	}
 	
@@ -488,6 +489,11 @@ public class HowieS : MonoBehaviour {
 
 		}
 
+	}
+
+	public void ActivateMetamorphosis()
+	{
+		//Activate proper metamorphosis based on the selection made by the user.
 	}
 	
 	public void GameOver (){
