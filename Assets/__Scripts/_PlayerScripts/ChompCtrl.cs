@@ -7,10 +7,11 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using UnityEngine;
 using System;
 namespace AssemblyCSharp
 {
-		public class ChompCtrl
+		public class ChompCtrl : MonoBehaviour
 		{
 				public ChompCtrl ()
 				{
