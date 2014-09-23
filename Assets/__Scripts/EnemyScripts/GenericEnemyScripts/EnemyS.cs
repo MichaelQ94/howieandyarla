@@ -59,6 +59,9 @@ public class EnemyS : MonoBehaviour {
 	public float breakOutTimeMax = 2;
 	public float breakOutSpeed = 500;
 
+	public bool  canBeSetOnFire = true;
+	public bool  onFire = false;
+
 	public NewChompS	chompy;
 
 	public LevelS level;

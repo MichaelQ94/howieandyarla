@@ -42,6 +42,9 @@ public class HowieS : MonoBehaviour {
 	public bool 		isHowieSolo = false; // true when in Howie solo mode
 	public float 		howieSoloSpeedMult = 2; // mult walk speed when Howie solo
 	
+	public bool 		metaActive = false; // THIS IS TOTALLY TEMP JUST TO TEST FIRE STUFF
+	public List<MetaGeneralS>	equippedMetas;
+	
 	public bool 		facingRight = true; // facing left or right?
 	
 	public static float maxHealth = 100; // max health for Howie
@@ -78,7 +81,12 @@ public class HowieS : MonoBehaviour {
 	void Update () {
 		
 		// howie switch needs to be in update to correctly read button down inputs
-		CheckHowieSwitch();
+		if (!metaActive){
+			CheckHowieSwitch();
+		}
+		if (!isHowieSolo){
+			ActivateMeta();
+		}
 		
 	}
 	
@@ -92,6 +100,95 @@ public class HowieS : MonoBehaviour {
 		
 		
 		
+	}
+
+	void ActivateMeta () {
+
+		string[] checkInputs = Input.GetJoystickNames();
+		int numInputs = checkInputs.Length;
+
+		// check to make sure player has metas equipped
+		if (equippedMetas.Count > 0 && !metaActive){
+
+			if (numInputs > 0){
+
+				// check for platform
+				if (Application.platform == RuntimePlatform.OSXEditor || 
+				    Application.platform == RuntimePlatform.OSXPlayer ||
+				    Application.platform == RuntimePlatform.OSXWebPlayer || 
+				    Application.platform == RuntimePlatform.OSXDashboardPlayer){
+
+					if (Input.GetButtonDown("Meta1Mac")){
+
+						// make sure player has enough energy,
+						// if so subtract and activate
+						if (blueEnergyAmt > equippedMetas[0].blueEnergyReq &&
+						    redEnergyAmt > equippedMetas[0].redEnergyReq &&
+						    purpleEnergyAmt > equippedMetas[0].purpleEnergyReq){
+
+							blueEnergyAmt -= equippedMetas[0].blueEnergyReq;
+							redEnergyAmt -= equippedMetas[0].redEnergyReq;
+							purpleEnergyAmt -= equippedMetas[0].purpleEnergyReq;
+
+							equippedMetas[0].Activate ();
+							metaActive = true;
+
+						}
+					}
+
+				}
+
+				//same but for pc
+				if (Application.platform == RuntimePlatform.WindowsEditor || 
+				    Application.platform == RuntimePlatform.WindowsPlayer ||
+				    Application.platform == RuntimePlatform.WindowsWebPlayer){
+
+					if (Input.GetButtonDown("Meta1PC")){
+
+						// make sure player has enough energy,
+						// if so subtract and activate
+						if (blueEnergyAmt > equippedMetas[0].blueEnergyReq &&
+						    redEnergyAmt > equippedMetas[0].redEnergyReq &&
+						    purpleEnergyAmt > equippedMetas[0].purpleEnergyReq){
+							
+							blueEnergyAmt -= equippedMetas[0].blueEnergyReq;
+							redEnergyAmt -= equippedMetas[0].redEnergyReq;
+							purpleEnergyAmt -= equippedMetas[0].purpleEnergyReq;
+							
+							equippedMetas[0].Activate ();
+							metaActive = true;
+							
+						}
+						
+					}
+
+				}
+			}
+
+			else{
+
+				// check for activate meta 1 button
+				if (Input.GetKeyDown(KeyCode.Alpha1)){
+					// make sure player has enough energy,
+					// if so subtract and activate
+					if (blueEnergyAmt > equippedMetas[0].blueEnergyReq &&
+					    redEnergyAmt > equippedMetas[0].redEnergyReq &&
+					    purpleEnergyAmt > equippedMetas[0].purpleEnergyReq){
+						
+						blueEnergyAmt -= equippedMetas[0].blueEnergyReq;
+						redEnergyAmt -= equippedMetas[0].redEnergyReq;
+						purpleEnergyAmt -= equippedMetas[0].purpleEnergyReq;
+						
+						equippedMetas[0].Activate ();
+						metaActive = true;
+						
+					}
+				}
+
+			}
+
+		}
+
 	}
 
 
@@ -184,8 +281,8 @@ public class HowieS : MonoBehaviour {
 			if (Application.platform == RuntimePlatform.WindowsEditor || 
 			    Application.platform == RuntimePlatform.WindowsPlayer ||
 			    Application.platform == RuntimePlatform.WindowsWebPlayer){
-				charVel.x = Input.GetAxis("HorizontalMac")*maxSpeed*Time.deltaTime;
-				charVel.y = Input.GetAxis("VerticalMac")*maxSpeed*Time.deltaTime;
+				charVel.x = Input.GetAxis("HorizontalPC")*maxSpeed*Time.deltaTime;
+				charVel.y = Input.GetAxis("VerticalPC")*maxSpeed*Time.deltaTime;
 			}
 			
 			if (yarla.holding){
