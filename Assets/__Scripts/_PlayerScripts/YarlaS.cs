@@ -47,6 +47,7 @@ public class YarlaS : MonoBehaviour {
 		launchMaxCooldown = launchMaxTime;
 
 		howie = GameObject.FindGameObjectsWithTag ("Player") [0].GetComponent<HowieS> ();
+		yarlaCtrl = new YarlaCtrl (this);
 
 	}
 
@@ -121,7 +122,8 @@ public class YarlaS : MonoBehaviour {
 	}
 
 	void HoldEnemy () {
-
+		yarlaCtrl.HoldEnemy ();
+		/*
 		string[] checkInputs = Input.GetJoystickNames();
 
 		int inputNumber = checkInputs.Length;
@@ -380,6 +382,7 @@ public class YarlaS : MonoBehaviour {
 		}
 		}
 		*/	
+
 	}
 
 	void ReturnToHowie() {
