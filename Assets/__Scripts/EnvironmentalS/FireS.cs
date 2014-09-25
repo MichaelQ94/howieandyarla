@@ -48,8 +48,20 @@ public class FireS : MonoBehaviour {
 	void OnTriggerStay (Collider other) {
 
 		if (other.gameObject.tag == "Enemy"){
-			if (other.gameObject.GetComponent<EnemyS>().canBeSetOnFire){
-				other.gameObject.GetComponent<EnemyS>().onFire = true;
+
+			EnemyS	collidedEnemy = other.gameObject.GetComponent<EnemyS>();
+
+			if (collidedEnemy.canBeSetOnFire && !collidedEnemy.onFire){
+				collidedEnemy.fireDamageCountdown = collidedEnemy.fireDamageMax;
+				collidedEnemy.fireTimeCountdown = collidedEnemy.fireTimeMax;
+				collidedEnemy.onFire = true;
+
+				// place a fire object on enemy's back
+				Vector3 followFirePos = other.transform.position;
+				followFirePos.z += 1;
+				GameObject followFire = Instantiate(gameObject,followFirePos,Quaternion.identity) as GameObject;
+				followFire.GetComponent<FireS>().lifeTime = collidedEnemy.fireTimeMax;
+				followFire.transform.parent = other.gameObject.transform;
 			}
 		}
 

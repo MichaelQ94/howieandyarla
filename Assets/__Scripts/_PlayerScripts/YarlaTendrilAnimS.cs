@@ -1,10 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class YarlaTendrilAnimS : MonoBehaviour {
 
 	public Transform	targetHead;
 	private	float 		originalZ;
+
+	public float 	wiggleRate = 0.1f;
+	public float 	wiggleRateMax = 0.1f;
+
+	public int 		currentWiggleFrame = 0;
+
+	public List<Texture>	wiggleFrames;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +24,7 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 	void FixedUpdate () {
 
 		FaceHead();
+		TendrilWiggle();
 
 	
 	}
@@ -28,6 +37,30 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 
 	}
 
+	void TendrilWiggle () {
+
+		if (renderer.enabled){
+
+			wiggleRate -= Time.deltaTime;
+
+			if (wiggleRate <= 0){
+
+				currentWiggleFrame++;
+
+				if (currentWiggleFrame > wiggleFrames.Count-1){
+
+					currentWiggleFrame = 0;
+
+				}
+
+				wiggleRate = wiggleRateMax;
+
+			}
+
+			renderer.material.SetTexture("_MainTex",wiggleFrames[currentWiggleFrame]);
+		}
+	}
+
 	void FaceHead(){
 
 		renderer.enabled = targetHead.gameObject.renderer.enabled;
@@ -38,8 +71,9 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 
 		Vector3	fixScale = transform.localScale;
 		float fixScaleDist = Vector3.Distance(new Vector3(targetHead.localPosition.x,targetHead.localPosition.y,transform.localPosition.z),
-		                                      transform.localPosition) + 0.25f;
-		fixScale.x = fixScale.y = fixScaleDist;
+		                                      transform.localPosition);
+		fixScale.x = fixScaleDist*1.75f;
+		fixScale.y = fixScaleDist/2;
 		transform.localScale = fixScale;
 
 		float lookAngle = Mathf.Atan2 (targetHead.localPosition.y,targetHead.localPosition.x) * Mathf.Rad2Deg;

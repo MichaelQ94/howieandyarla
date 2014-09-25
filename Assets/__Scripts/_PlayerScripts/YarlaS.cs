@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class YarlaS : MonoBehaviour {
 
@@ -35,6 +36,12 @@ public class YarlaS : MonoBehaviour {
 
 	public float 		enemyCapturedZ;
 
+	public float 		launchAnimRate = 0.1f;
+	public float 		launchAnimRateMax = 0.1f;
+	public int 			currentLaunchFrame = 0;
+
+	public List<Texture>	launchAnimFrames;
+
 	public HowieS howie;
 
 	public YarlaCtrl yarlaCtrl;
@@ -49,15 +56,26 @@ public class YarlaS : MonoBehaviour {
 		howie = GameObject.FindGameObjectsWithTag ("Player") [0].GetComponent<HowieS> ();
 		yarlaCtrl = new YarlaCtrl (this);
 
+		launchAnimRateMax = launchMaxTime/launchAnimFrames.Count;
+
 	}
 
 	void FixedUpdate () {
 		// turn throw and grab off when just solo howie
-		if (!howie.isHowieSolo){
+		if (!howie.isHowieSolo && !howie.metaActive){
 
 			HoldEnemy ();
 			renderer.enabled = true;
 			collider.enabled = true;
+
+			LookMean();
+
+			if (transform.localPosition.x < 0){
+				renderer.material.SetTextureScale("_MainTex", new Vector2(1, -1));
+			}
+			else{
+				renderer.material.SetTextureScale("_MainTex", new Vector2(-1,-1));
+			}
 
 
 		}
@@ -118,6 +136,29 @@ public class YarlaS : MonoBehaviour {
 
 		transform.localPosition = Vector3.zero;
 
+
+	}
+
+	void LookMean () {
+
+		// for animating on launch
+		if (launched){
+			if (currentLaunchFrame < launchAnimFrames.Count - 1){
+				launchAnimRate -= Time.deltaTime;
+				if (launchAnimRate <= 0){
+					launchAnimRate = launchAnimRateMax;
+					currentLaunchFrame++;
+				}
+			}
+		}
+		else{
+			launchAnimRate = launchAnimRateMax;
+			currentLaunchFrame = 0;
+		}
+
+		//print(currentLaunchFrame);
+
+		renderer.material.SetTexture("_MainTex", launchAnimFrames[currentLaunchFrame]);
 
 	}
 

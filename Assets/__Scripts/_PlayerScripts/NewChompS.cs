@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NewChompS : MonoBehaviour {
 	
@@ -28,8 +29,8 @@ public class NewChompS : MonoBehaviour {
 	public float hitBackMult = 3000;
 	public float howieMovMult = 0.1f;
 
-	public Material	defaultMat;
-	public Material	sweetSpotMat;
+	//public Material	defaultMat;
+	//public Material	sweetSpotMat;
 
 	public bool attacking = false;
 	public float attackTimeMax = 0.5f;
@@ -43,14 +44,20 @@ public class NewChompS : MonoBehaviour {
 
 	public float capturedTimeHeld;
 	public float timeToTriggerChomp = 3; 
+	public float timeToTriggerChompNoAbsorb = 1;
 
 	public HowieS howie;
+	public YarlaS	yarla;
+
+	public List<Texture>	chompChargeTexts;
+	public int currentTexture;
 
 	
 	// Use this for initialization
 	void Start () {
 
 		howie = GameObject.FindGameObjectsWithTag ("Player") [0].GetComponent<HowieS> ();
+		yarla = GameObject.FindGameObjectsWithTag ("YarlaS") [0].GetComponent<YarlaS> ();
 
 		attackTimeHoldMax = attackTimeMax/2;
 	}
@@ -66,21 +73,33 @@ public class NewChompS : MonoBehaviour {
 		// chomp should not work when we are just solo howie!
 		// turn this on and off appropriately
 		
-		if (!howie.isHowieSolo){			
+		if (!howie.isHowieSolo && !howie.metaActive){			
 			renderer.enabled = true;
 
 			//have head facing appropriate way
-			if (transform.localPosition.x < 0){
-				renderer.material.SetTextureScale("_MainTex", new Vector2(1, -1));
+			if (yarla.holding){
+				if (transform.localPosition.x < 0){
+					renderer.material.SetTextureScale("_MainTex", new Vector2(-1, -1));
+				}
+				else{
+					renderer.material.SetTextureScale("_MainTex", new Vector2(1,-1));
+				}
 			}
 			else{
-				renderer.material.SetTextureScale("_MainTex", new Vector2(-1,-1));
+				if (transform.localPosition.x < 0){
+					renderer.material.SetTextureScale("_MainTex", new Vector2(1, -1));
+				}
+				else{
+					renderer.material.SetTextureScale("_MainTex", new Vector2(-1,-1));
+				}
 			}
 
 			collider.enabled = true;
 
 			MoveChompHead();
 			ChompAttack(); // method for charging chomp attack
+			
+			ChargeAnimation();
 			
 		}
 		
@@ -120,6 +139,41 @@ public class NewChompS : MonoBehaviour {
 			attacking = false;
 
 		}
+
+	}
+
+	void ChargeAnimation () {
+
+		// fix absorb time based on whether yarla is holding enemy or not
+		if (yarla.holding){
+			timeToTriggerChomp = yarla.holdTarget.GetComponent<EnemyS>().requiredAbsorbTime;
+		}
+		else{
+			if (!charging){
+				timeToTriggerChomp = timeToTriggerChompNoAbsorb;
+			}
+		}
+
+		// this animation code might be kinda ugly
+		// but this is so we can have one animation work no matter what the required charge time is
+		// for each enemy
+
+		if (charging){
+			for (int i = 0; i < chompChargeTexts.Count; i++){
+
+				if (i > currentTexture && timeHeld >= timeToTriggerChomp/(chompChargeTexts.Count-i)){
+					currentTexture = i;
+				}
+
+			}
+		}
+		else{
+			currentTexture = 0;
+		}
+
+		//print(currentTexture);
+
+		renderer.material.SetTexture("_MainTex", chompChargeTexts[currentTexture]);
 
 	}
 
@@ -284,13 +338,13 @@ public class NewChompS : MonoBehaviour {
 			}
 		}
 
-		// change color when at sweetSpot
+		/*// change color when at sweetSpot
 		if (timeHeld >= timeToTriggerChomp-0.1f && timeHeld <= timeToTriggerChomp+0.1f){
 			renderer.material = sweetSpotMat;
 		}
 		else{
 			renderer.material = defaultMat;
-		}
+		}*/
 		
 		// accept input for proper platform (mac vs pc)
 		if (Application.platform == RuntimePlatform.OSXEditor || 

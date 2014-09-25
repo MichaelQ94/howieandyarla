@@ -44,6 +44,7 @@ public class HowieS : MonoBehaviour {
 	
 	public bool 		metaActive = false; // THIS IS TOTALLY TEMP JUST TO TEST FIRE STUFF
 	public List<MetaGeneralS>	equippedMetas;
+	public List<Texture>		fireHowieAndYarlaTexts; // seriously I mean it
 	
 	public bool 		facingRight = true; // facing left or right?
 	
@@ -132,6 +133,7 @@ public class HowieS : MonoBehaviour {
 
 							equippedMetas[0].Activate ();
 							metaActive = true;
+							currentWalkSprite = 0;
 
 						}
 					}
@@ -157,6 +159,7 @@ public class HowieS : MonoBehaviour {
 							
 							equippedMetas[0].Activate ();
 							metaActive = true;
+							currentWalkSprite = 0;
 							
 						}
 						
@@ -181,6 +184,7 @@ public class HowieS : MonoBehaviour {
 						
 						equippedMetas[0].Activate ();
 						metaActive = true;
+						currentWalkSprite = 0;
 						
 					}
 				}
@@ -219,8 +223,16 @@ public class HowieS : MonoBehaviour {
 			if (walkCycleRateCountdown <= 0){
 				currentWalkSprite++;
 				if (!isHowieSolo){
-					if (currentWalkSprite > howieWalkCycle.Count-1){
-						currentWalkSprite = 0;
+					if (metaActive){
+						// change this meta-based texture swapping ASAP!
+						if (currentWalkSprite > fireHowieAndYarlaTexts.Count-1){
+							currentWalkSprite = 0;
+						}
+					}
+					else{
+						if (currentWalkSprite > howieWalkCycle.Count-1){
+							currentWalkSprite = 0;
+						}
 					}
 				}
 				else{
@@ -241,7 +253,13 @@ public class HowieS : MonoBehaviour {
 		}
 		
 		if (!isHowieSolo){
-			attachedSprite.renderer.material.SetTexture("_MainTex",howieWalkCycle[currentWalkSprite]);
+			// change this whole meta-based texture swapping ASAP!!
+			if (metaActive){
+				attachedSprite.renderer.material.SetTexture("_MainTex",fireHowieAndYarlaTexts[currentWalkSprite]);
+			}
+			else{
+				attachedSprite.renderer.material.SetTexture("_MainTex",howieWalkCycle[currentWalkSprite]);
+			}
 			attachedSprite.transform.localScale = new Vector3(1,1,1);
 			yarlaShadow.renderer.enabled = true;
 			howieShadow.renderer.enabled = false;

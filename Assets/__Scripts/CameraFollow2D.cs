@@ -7,6 +7,22 @@ public class CameraFollow2D : MonoBehaviour {
 	public float				camEasing = 0.1f;
 	public float 				camZ = -10;
 	public Vector3				camOffset;
+
+	public float		orthoZoomOutSpeed = 0.5f;
+
+	public float 		orthoMinSize;
+	public float 		orthoOriginSize;
+	public float 		minMaxMult = 0.8f;
+
+	public NewChompS	attachedChomp;
+	public YarlaS		attachedYarla;
+
+	void Start () {
+
+		orthoOriginSize = camera.orthographicSize;
+		orthoMinSize = orthoOriginSize*minMaxMult;
+
+	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -23,6 +39,26 @@ public class CameraFollow2D : MonoBehaviour {
 		
 		if (!CameraShakeS.C.shaking){
 			this.transform.position = camPos;
+		}
+
+		
+		// change ortho size when charging absorb attack
+		if (attachedChomp.charging && attachedYarla.holding){
+			if (attachedChomp.timeHeld < attachedChomp.timeToTriggerChomp){
+				camera.orthographicSize = (orthoOriginSize-
+				                           (orthoOriginSize-orthoMinSize)*attachedChomp.timeHeld/attachedChomp.timeToTriggerChomp);
+			}
+			else{
+				camera.orthographicSize = orthoMinSize;
+			}
+		}
+		else{
+			if (camera.orthographicSize < orthoOriginSize){
+				camera.orthographicSize += orthoZoomOutSpeed*Time.deltaTime;
+			}
+			else{
+				camera.orthographicSize = orthoOriginSize;
+			}
 		}
 	}
 }

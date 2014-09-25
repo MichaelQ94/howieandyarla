@@ -176,12 +176,24 @@ public class CrawlerS : EnemyS {
 		// change speed depending on state of hostility
 		if (invulnerable){
 		if (attacking || scared){
-			rigidbody.velocity = (movTarget - transform.position).normalized*attackSpeed*Time.deltaTime;
+				if (onFire){
+					rigidbody.velocity = (movTarget - transform.position).normalized*-attackSpeed*Time.deltaTime;
+				}
+				else{
+					rigidbody.velocity = (movTarget - transform.position).normalized*attackSpeed*Time.deltaTime;
+				}
 				//print(movTarget - transform.position);
 		}
 		else{
 			
-			rigidbody.velocity = (movTarget - transform.position).normalized*walkSpeed*Time.deltaTime;
+				if (onFire){
+					rigidbody.velocity = (movTarget - transform.position).normalized*-walkSpeed*Time.deltaTime;
+				}
+				else
+				{
+					rigidbody.velocity = (movTarget - transform.position).normalized*walkSpeed*Time.deltaTime;
+
+				}
 
 				//print (movTarget - transform.position);
 		}
@@ -191,6 +203,8 @@ public class CrawlerS : EnemyS {
 		if (attackReverseCountdown > 0){
 			attackReverseCountdown-=Time.deltaTime;
 		}
+
+
 
 	}
 
@@ -221,7 +235,7 @@ public class CrawlerS : EnemyS {
 			scared = false;
 		}*/
 
-		if (knockedOut || beingHeld){
+		if (knockedOut || beingHeld || onFire){
 			invulnerable = false;
 			if (!beingHeld){
 				renderer.material = vulnMat;
@@ -353,6 +367,15 @@ public class CrawlerS : EnemyS {
 		if (other.gameObject.tag == "Yarla"){
 			stunCountdown = stunMax;
 			knockedOut = true;
+		}
+
+		// getting hit by projectile
+		if (other.gameObject.tag == "Projectile" || other.gameObject.tag == "Smokeshot"){
+
+			if (other.gameObject.GetComponent<ProjectileS>().friendly){
+				invulnerable = false;
+			}
+
 		}
 
 	}
