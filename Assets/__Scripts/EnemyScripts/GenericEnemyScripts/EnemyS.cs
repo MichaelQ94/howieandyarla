@@ -61,6 +61,14 @@ public class EnemyS : MonoBehaviour {
 
 	public bool  canBeSetOnFire = true;
 	public bool  onFire = false;
+	public float fireTimeMax = 2;
+	public float fireTimeCountdown;
+	public float fireDamageMax = 0.2f;
+	public float fireDamageCountdown;
+	public float fireDamageToTake = 5;
+	public GameObject	firePrefab;
+
+	public float 	recycleTime = 10;
 
 	public NewChompS	chompy;
 
@@ -84,6 +92,7 @@ public class EnemyS : MonoBehaviour {
 		
 		FixVelocity();
 		CheckStun();
+		CheckFire();
 		ManageMat();
 		CheckDeath();
 
@@ -95,6 +104,11 @@ public class EnemyS : MonoBehaviour {
 			collider.enabled = false;
 
 			shadow.renderer.enabled = renderer.enabled;
+
+			recycleTime -= Time.deltaTime;
+			if (recycleTime <= 0){
+				Destroy(gameObject);
+			}
 
 		}
 
@@ -140,6 +154,31 @@ public class EnemyS : MonoBehaviour {
 		}
 		
 		
+	}
+
+	void CheckFire () {
+
+		if (onFire){
+
+			fireTimeCountdown -= Time.deltaTime;
+
+			fireDamageCountdown -= Time.deltaTime;
+
+			if (fireDamageCountdown <= 0){
+				//print ("TOOK FIRE DAMAGE");
+				Vector3 fireSpawnPos = transform.position;
+				fireSpawnPos.z += 1;
+				Instantiate(firePrefab,fireSpawnPos,Quaternion.identity);
+				enemyHealth -= fireDamageToTake;
+				fireDamageCountdown = fireDamageMax;
+			}
+
+
+			if (fireTimeCountdown <= 0){
+				onFire = false;
+			}
+		}
+
 	}
 	
 	void CheckStun () {
@@ -240,19 +279,20 @@ public class EnemyS : MonoBehaviour {
 		hitStunned = true;
 		if (!rigidbody.isKinematic){
 			rigidbody.velocity = hitBackVel*Time.deltaTime*kickBackMult;
+				print(rigidbody.velocity);
 		}
 
 		// mult damage depending on stun or held state
 
-		if (beingHeld){
+		/*if (beingHeld){
 			enemyHealth -= damage*chompy.holdingDamageMult;
 		}
 		else if (knockedOut || enemyHealth <= maxHealth/2){
 			enemyHealth -= damage*chompy.stunnedDamageMult;
 		}
-		else{
+		else{*/
 			enemyHealth -= damage;
-		}
+		//}
 		}
 
 	}

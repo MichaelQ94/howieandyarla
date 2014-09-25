@@ -19,6 +19,7 @@ public class MetaGeneralS : MonoBehaviour {
 		duration -= Time.deltaTime;
 		if (duration <= 0){
 			attachedHowie.metaActive = false;
+			attachedHowie.currentWalkSprite = 0;
 			activated = false;
 		}
 
