@@ -4,6 +4,23 @@ using System;
 public class YarlaCtrl
 {
 	public YarlaS yarla;
+	public HowieS howie;
+	public Rigidbody rigidbody;
+
+	public GameObject holdTarget;
+	public bool	holding = false; //True if currently holding something
+	public float holdTime = 0;
+	public float sweetSpot = 0.4f;
+	public float maxthrowvel = 10000;
+
+	public float enemyCapturedZ;
+
+	//Launch attributes
+	public float launchSpeed = 1000;
+	public bool	launchAxisDown = false;
+	public bool	launched = false;
+	public float launchMaxCooldown = 0.2f;
+
 
 	public YarlaCtrl ()
 	{
@@ -11,7 +28,21 @@ public class YarlaCtrl
 
 	public YarlaCtrl(YarlaS yarla)
 	{
+		//Gain access to yarla and acquire Yarla's attributes
+		//(So we don't have to keep going into yarla to get them)
+		//keep
 		this.yarla = yarla;
+		this.howie = yarla.howie;
+		rigidbody = yarla.rigidbody;
+
+		//port over?
+		holdTarget = yarla.holdTarget;
+		holding = yarla.holding;
+		launchSpeed = yarla.launchSpeed;
+		launchAxisDown = yarla.launchAxisDown;
+		launched = yarla.launched;
+		launchMaxCooldown = yarla.launchMaxCooldown;
+
 	}
 
 	public void HoldEnemy () {
@@ -29,38 +60,38 @@ public class YarlaCtrl
 		    Application.platform == RuntimePlatform.OSXPlayer ||
 		    Application.platform == RuntimePlatform.OSXWebPlayer || 
 		    Application.platform == RuntimePlatform.OSXDashboardPlayer){
-			if (Input.GetAxis("Fire1Mac") > 0 && !yarla.launched && !yarla.holding && !yarla.launchAxisDown){
+			if (Input.GetAxis("Fire1Mac") > 0 && !launched && !holding && !launchAxisDown){
 				if (inputNumber > 0){
-					yarla.rigidbody.velocity = new Vector3
-						(yarla.launchSpeed*Input.GetAxis("SecondHorizontalMac"),
-						 yarla.launchSpeed*Input.GetAxis("SecondVerticalMac"),0)*Time.deltaTime;
+					rigidbody.velocity = new Vector3
+						(launchSpeed*Input.GetAxis("SecondHorizontalMac"),
+						 launchSpeed*Input.GetAxis("SecondVerticalMac"),0)*Time.deltaTime;
 				}
 				else{
-					yarla.rigidbody.velocity = new Vector3
-						(yarla.launchSpeed*yarla.howie.handPos.x,
-						 yarla.launchSpeed*yarla.howie.handPos.y,0)*Time.deltaTime/yarla.howie.maxHandRadius;
+					rigidbody.velocity = new Vector3
+						(launchSpeed*howie.handPos.x,
+						 launchSpeed*howie.handPos.y,0)*Time.deltaTime/howie.maxHandRadius;
 				}
-				yarla.launchAxisDown = true;
-				yarla.launched = true;
+				launchAxisDown = true;
+				launched = true;
 				//print ("Shoot!");
 			}
 		}
 		if (Application.platform == RuntimePlatform.WindowsEditor || 
 		    Application.platform == RuntimePlatform.WindowsPlayer ||
 		    Application.platform == RuntimePlatform.WindowsWebPlayer){
-			if (Input.GetAxis("Fire1PC") > 0 && !yarla.launched && !yarla.holding && !yarla.launchAxisDown){
+			if (Input.GetAxis("Fire1PC") > 0 && !launched && !holding && !launchAxisDown){
 				if (inputNumber > 0){
-					yarla.rigidbody.velocity = new Vector3
-						(yarla.launchSpeed*Input.GetAxis("SecondHorizontalPC"),
-						 yarla.launchSpeed*Input.GetAxis("SecondVerticalPC"),0)*Time.deltaTime;
+					rigidbody.velocity = new Vector3
+						(launchSpeed*Input.GetAxis("SecondHorizontalPC"),
+						 launchSpeed*Input.GetAxis("SecondVerticalPC"),0)*Time.deltaTime;
 				}
 				else{
-					yarla.rigidbody.velocity = new Vector3
-						(yarla.launchSpeed*yarla.howie.handPos.x,
-						 yarla.launchSpeed*yarla.howie.handPos.y,0)*Time.deltaTime/yarla.howie.maxHandRadius;
+					rigidbody.velocity = new Vector3
+						(launchSpeed*howie.handPos.x,
+						 launchSpeed*howie.handPos.y,0)*Time.deltaTime/howie.maxHandRadius;
 				}
-				yarla.launchAxisDown = true;
-				yarla.launched = true;
+				launchAxisDown = true;
+				launched = true;
 			}
 		}
 		
@@ -68,48 +99,48 @@ public class YarlaCtrl
 		    Application.platform == RuntimePlatform.OSXPlayer ||
 		    Application.platform == RuntimePlatform.OSXWebPlayer || 
 		    Application.platform == RuntimePlatform.OSXDashboardPlayer){
-			if (yarla.launchAxisDown && Input.GetAxis("Fire1Mac") <= 0){
-				yarla.launchAxisDown = false;
+			if (launchAxisDown && Input.GetAxis("Fire1Mac") <= 0){
+				launchAxisDown = false;
 			}
 		}
 		
 		if (Application.platform == RuntimePlatform.WindowsEditor || 
 		    Application.platform == RuntimePlatform.WindowsPlayer ||
 		    Application.platform == RuntimePlatform.WindowsWebPlayer){
-			if (yarla.launchAxisDown && Input.GetAxis("Fire1PC") <= 0){
-				yarla.launchAxisDown = false;
+			if (launchAxisDown && Input.GetAxis("Fire1PC") <= 0){
+				launchAxisDown = false;
 			}
 		}
 		
-		if (yarla.launched){
-			yarla.launchMaxCooldown -= Time.deltaTime;
-			if (yarla.launchMaxCooldown <= 0){
+		if (launched){
+			launchMaxCooldown -= Time.deltaTime;
+			if (launchMaxCooldown <= 0){
 				ReturnToHowie();
 			}
-			if (yarla.holdTarget != null){
+			if (holdTarget != null){
 				CameraShakeS.C.MicroShake();
 				ReturnToHowie();
-				yarla.holding = true;
-				yarla.enemyCapturedZ = yarla.holdTarget.transform.position.z;
-				yarla.holdTarget.rigidbody.velocity = Vector3.zero;
-				yarla.holdTarget.transform.position = yarla.transform.position;
-				yarla.holdTarget.transform.parent = yarla.transform;
-				yarla.holdTarget.rigidbody.isKinematic = true;
-				yarla.holdTarget.GetComponent<EnemyS>().beingHeld = true;
-				yarla.launched = false;
+				holding = true;
+				enemyCapturedZ = holdTarget.transform.position.z;
+				holdTarget.rigidbody.velocity = Vector3.zero;
+				holdTarget.transform.position = yarla.transform.position;
+				holdTarget.transform.parent = yarla.transform;
+				holdTarget.rigidbody.isKinematic = true;
+				holdTarget.GetComponent<EnemyS>().beingHeld = true;
+				launched = false;
 			}
 		}
 		
-		if (yarla.holding && yarla.holdTarget != null){
+		if (holding && holdTarget != null){
 			
-			yarla.holdTime += Time.deltaTime;
+			holdTime += Time.deltaTime;
 			
-			if (yarla.holdTime >= yarla.sweetSpot - 0.3f && yarla.holdTime <= yarla.sweetSpot){
-				yarla.holdTarget.GetComponent<EnemyS>().atSweetSpot = true;
+			if (holdTime >= sweetSpot - 0.3f && holdTime <= sweetSpot){
+				holdTarget.GetComponent<EnemyS>().atSweetSpot = true;
 			}
 			
 			else{
-				yarla.holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
+				holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 			}
 			
 			if (Application.platform == RuntimePlatform.OSXEditor || 

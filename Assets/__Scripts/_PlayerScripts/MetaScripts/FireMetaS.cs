@@ -7,6 +7,9 @@ public class FireMetaS : MetaGeneralS {
 	public GameObject	fireBallPrefab;
 	public GameObject	smokeShotPrefab;
 
+	public float DURATION_MAX = 10;
+	public float duration;
+
 	public float 		fireBallSpeed;
 	public float 		fireBallRateOfFire = 2;
 	public float 		fireBallROFCountdown;
