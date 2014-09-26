@@ -142,7 +142,7 @@ public class ProjectileS : MonoBehaviour {
 			if (friendly){
 				// smokeshot should do way more knockback/stun
 				if (smokeShot){
-					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity*50,0.5f,strength);
+					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity*50,1,strength);
 				}
 				else{
 					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity,0.2f,strength);

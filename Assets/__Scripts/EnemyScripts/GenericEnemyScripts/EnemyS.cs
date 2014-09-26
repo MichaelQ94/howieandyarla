@@ -279,7 +279,7 @@ public class EnemyS : MonoBehaviour {
 		hitStunned = true;
 		if (!rigidbody.isKinematic){
 			rigidbody.velocity = hitBackVel*Time.deltaTime*kickBackMult;
-				print(rigidbody.velocity);
+//				print(rigidbody.velocity);
 		}
 
 		// mult damage depending on stun or held state
