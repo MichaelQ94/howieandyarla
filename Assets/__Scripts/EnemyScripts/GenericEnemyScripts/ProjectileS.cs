@@ -148,7 +148,7 @@ public class ProjectileS : MonoBehaviour {
 					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity,0.2f,strength);
 				}
 				CameraShakeS.C.LargeShake();
-				CameraShakeS.C.TimeSleep(0.2f);
+				CameraShakeS.C.TimeSleep(0.1f);
 				Destroy(gameObject);
 			}
 			

@@ -5,6 +5,9 @@ public class TeleporterS : MonoBehaviour {
 
 	public GameObject	transportTarget;
 
+	public bool 		changeScene = false;
+	public string		sceneChangeTarget;
+
 	void OnCollisionEnter (Collision other){
 
 		if (other.gameObject.tag == "Player"){
@@ -18,6 +21,10 @@ public class TeleporterS : MonoBehaviour {
 				//Vector3 cameraTransportPos = transportTarget.transform.position;
 				//cameraTransportPos.z = CameraShakeS.C.transform.position.z;
 				//CameraShakeS.C.transform.position = cameraTransportPos;
+			}
+
+			if (changeScene){
+				Application.LoadLevel(sceneChangeTarget);
 			}
 		}
 
