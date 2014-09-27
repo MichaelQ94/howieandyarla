@@ -5,13 +5,18 @@ public class YarlaCtrl
 {
 	public YarlaS yarla;
 	public HowieS howie;
+	public NewChompS chompHead;
 	public Rigidbody rigidbody;
 
 	public GameObject holdTarget;
 	public bool	holding = false; //True if currently holding something
 	public float holdTime = 0;
 	public float sweetSpot = 0.4f;
-	public float maxthrowvel = 10000;
+	public float maxThrowVel = 10000;
+	public float throwExceedMult = 0.75f;
+
+	public float kickBackMultiplier = 0.25f;
+	public float kickBackTime = 0.2f;
 
 	public float enemyCapturedZ;
 
@@ -20,6 +25,7 @@ public class YarlaCtrl
 	public bool	launchAxisDown = false;
 	public bool	launched = false;
 	public float launchMaxCooldown = 0.2f;
+	public float launchMaxTime = 0.2f;
 
 
 	public YarlaCtrl ()
@@ -33,15 +39,10 @@ public class YarlaCtrl
 		//keep
 		this.yarla = yarla;
 		this.howie = yarla.howie;
+		this.chompHead = yarla.chompHead;
 		rigidbody = yarla.rigidbody;
 
 		//port over?
-		holdTarget = yarla.holdTarget;
-		holding = yarla.holding;
-		launchSpeed = yarla.launchSpeed;
-		launchAxisDown = yarla.launchAxisDown;
-		launched = yarla.launched;
-		launchMaxCooldown = yarla.launchMaxCooldown;
 
 	}
 
@@ -150,56 +151,56 @@ public class YarlaCtrl
 				
 				if (Input.GetAxis("Fire1Mac") <= 0){
 					
-					yarla.holdTarget.transform.parent = null;
-					yarla.holdTarget.rigidbody.isKinematic = false;
-					Vector3 resetTargetPos = yarla.holdTarget.transform.position;
-					resetTargetPos.z = yarla.enemyCapturedZ;
-					yarla.holdTarget.transform.position = resetTargetPos;
-					yarla.holdTarget.GetComponent<EnemyS>().beingHeld = false;
-					yarla.holdTarget.GetComponent<EnemyS>().beingThrown = true;
+					holdTarget.transform.parent = null;
+					holdTarget.rigidbody.isKinematic = false;
+					Vector3 resetTargetPos = holdTarget.transform.position;
+					resetTargetPos.z = enemyCapturedZ;
+					holdTarget.transform.position = resetTargetPos;
+					holdTarget.GetComponent<EnemyS>().beingHeld = false;
+					holdTarget.GetComponent<EnemyS>().beingThrown = true;
 					
 					Vector3 throwVelocity;
 					
-					if (yarla.holdTime > yarla.sweetSpot){
+					if (holdTime > sweetSpot){
 						if (inputNumber > 0){
-							throwVelocity = new Vector3 (yarla.maxThrowVel*Input.GetAxis("SecondHorizontalMac"),
-							                             yarla.maxThrowVel*Input.GetAxis("SecondVerticalMac"), 0)*yarla.throwExceedMult
+							throwVelocity = new Vector3 (maxThrowVel*Input.GetAxis("SecondHorizontalMac"),
+							                             maxThrowVel*Input.GetAxis("SecondVerticalMac"), 0)*throwExceedMult
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (yarla.maxThrowVel*yarla.howie.handPos.x,
-							                             yarla.maxThrowVel*yarla.howie.handPos.y, 0)*yarla.throwExceedMult
-								*Time.deltaTime*2/yarla.howie.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*throwExceedMult
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						yarla.howie.rigidbody.AddForce(throwVelocity*-1*yarla.kickBackMultiplier
-						                         *Time.deltaTime*yarla.throwExceedMult,ForceMode.Impulse);
-						yarla.holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						                         *Time.deltaTime*throwExceedMult,ForceMode.Impulse);
+						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 					}
 					else{
 						if (inputNumber > 0){
-							throwVelocity = new Vector3 (yarla.maxThrowVel*Input.GetAxis("SecondHorizontalMac"),
-							                             yarla.maxThrowVel*Input.GetAxis("SecondVerticalMac"), 0)*(yarla.holdTime/yarla.sweetSpot)
+							throwVelocity = new Vector3 (maxThrowVel*Input.GetAxis("SecondHorizontalMac"),
+							                             maxThrowVel*Input.GetAxis("SecondVerticalMac"), 0)*(holdTime/sweetSpot)
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (yarla.maxThrowVel*yarla.howie.handPos.x,
-							                             yarla.maxThrowVel*yarla.howie.handPos.y, 0)*(yarla.holdTime/yarla.sweetSpot)
-								*Time.deltaTime*2/yarla.howie.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*(holdTime/sweetSpot)
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						yarla.howie.rigidbody.AddForce(throwVelocity*-1*yarla.kickBackMultiplier
-						                         *Time.deltaTime*(yarla.holdTime/yarla.sweetSpot),ForceMode.Impulse);
-						yarla.holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						                         *Time.deltaTime*(holdTime/sweetSpot),ForceMode.Impulse);
+						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 						
 					}
 					
 					CameraShakeS.C.MicroShake();
-					yarla.holdTarget.rigidbody.velocity = throwVelocity;
-					yarla.howie.KnockBack(yarla.kickBackTime);
+					holdTarget.rigidbody.velocity = throwVelocity;
+					howie.KnockBack(kickBackTime);
 					//print(throwVelocity);
 					
-					yarla.launchAxisDown = false;
-					yarla.holding = false;
-					yarla.holdTime = 0;
+					launchAxisDown = false;
+					holding = false;
+					holdTime = 0;
 				}
 			}
 			
@@ -209,56 +210,56 @@ public class YarlaCtrl
 				
 				if (Input.GetAxis("Fire1PC") <= 0){
 					
-					yarla.holdTarget.transform.parent = null;
-					yarla.holdTarget.rigidbody.isKinematic = false;
-					Vector3 resetTargetPos = yarla.holdTarget.transform.position;
-					resetTargetPos.z = yarla.enemyCapturedZ;
-					yarla.holdTarget.transform.position = resetTargetPos;
-					yarla.holdTarget.GetComponent<EnemyS>().beingHeld = false;
-					yarla.holdTarget.GetComponent<EnemyS>().beingThrown = true;
+					holdTarget.transform.parent = null;
+					holdTarget.rigidbody.isKinematic = false;
+					Vector3 resetTargetPos = holdTarget.transform.position;
+					resetTargetPos.z = enemyCapturedZ;
+					holdTarget.transform.position = resetTargetPos;
+					holdTarget.GetComponent<EnemyS>().beingHeld = false;
+					holdTarget.GetComponent<EnemyS>().beingThrown = true;
 					
 					Vector3 throwVelocity;
 					
-					if (yarla.holdTime > yarla.sweetSpot){
+					if (holdTime > sweetSpot){
 						if (inputNumber > 0){
-							throwVelocity = new Vector3 (yarla.maxThrowVel*Input.GetAxis("SecondHorizontalPC"),
-							                             yarla.maxThrowVel*Input.GetAxis("SecondVerticalPC"), 0)*yarla.throwExceedMult
+							throwVelocity = new Vector3 (maxThrowVel*Input.GetAxis("SecondHorizontalPC"),
+							                             maxThrowVel*Input.GetAxis("SecondVerticalPC"), 0)*throwExceedMult
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (yarla.maxThrowVel*yarla.howie.handPos.x,
-							                             yarla.maxThrowVel*yarla.howie.handPos.y, 0)*yarla.throwExceedMult
-								*Time.deltaTime*2/yarla.howie.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*throwExceedMult
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						yarla.howie.rigidbody.AddForce(throwVelocity*-1*yarla.kickBackMultiplier
-						                               *Time.deltaTime*yarla.throwExceedMult,ForceMode.Impulse);
-						yarla.holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						                               *Time.deltaTime*throwExceedMult,ForceMode.Impulse);
+						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 					}
 					else{
 						if (inputNumber > 0){
-							throwVelocity = new Vector3 (yarla.maxThrowVel*Input.GetAxis("SecondHorizontalPC"),
-							                             yarla.maxThrowVel*Input.GetAxis("SecondVerticalPC"), 0)*(yarla.holdTime/yarla.sweetSpot)
+							throwVelocity = new Vector3 (maxThrowVel*Input.GetAxis("SecondHorizontalPC"),
+							                             maxThrowVel*Input.GetAxis("SecondVerticalPC"), 0)*(holdTime/sweetSpot)
 								*Time.deltaTime;
 						}
 						else{
-							throwVelocity = new Vector3 (yarla.maxThrowVel*yarla.howie.handPos.x,
-							                             yarla.maxThrowVel*yarla.howie.handPos.y, 0)*(yarla.holdTime/yarla.sweetSpot)
-								*Time.deltaTime*2/yarla.howie.maxHandRadius;
+							throwVelocity = new Vector3 (maxThrowVel*howie.handPos.x,
+							                             maxThrowVel*howie.handPos.y, 0)*(holdTime/sweetSpot)
+								*Time.deltaTime*2/howie.maxHandRadius;
 						}
-						yarla.howie.rigidbody.AddForce(throwVelocity*-1*yarla.kickBackMultiplier
-						                         *Time.deltaTime*(yarla.holdTime/yarla.sweetSpot),ForceMode.Impulse);
-						yarla.holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
+						howie.rigidbody.AddForce(throwVelocity*-1*kickBackMultiplier
+						                         *Time.deltaTime*(holdTime/sweetSpot),ForceMode.Impulse);
+						holdTarget.GetComponent<EnemyS>().atSweetSpot = false;
 						
 					}
 					
 					CameraShakeS.C.MicroShake();
-					yarla.holdTarget.rigidbody.velocity = throwVelocity;
-					yarla.howie.KnockBack(yarla.kickBackTime);
+					holdTarget.rigidbody.velocity = throwVelocity;
+					howie.KnockBack(kickBackTime);
 					//print(throwVelocity);
 					
-					yarla.launchAxisDown = false;
-					yarla.holding = false;
-					yarla.holdTime = 0;
+					launchAxisDown = false;
+					holding = false;
+					holdTime = 0;
 				}
 			}
 			
@@ -307,36 +308,83 @@ public class YarlaCtrl
 		*/	
 	}
 
+	public void OnTriggerEnter ( Collider other ){
+		
+		
+		
+		if (other.gameObject.tag == "Enemy" && !holding){
+			
+			if (holdTarget == null){
+				
+				// only add if enemy is not dead and can be held
+				
+				if (!other.gameObject.GetComponent<EnemyS>().isDead && 
+				    !other.gameObject.GetComponent<EnemyS>().cannotBeHeld){
+					holdTarget = other.gameObject;
+					chompHead.timeToTriggerChomp = other.GetComponent<EnemyS>().requiredAbsorbTime;
+					//CameraShakeS.C.TimeSleep(grabTimeSleep);
+					
+				}
+			}
+			
+			else if (holdTarget.gameObject.name != other.gameObject.name){
+				if (!other.gameObject.GetComponent<EnemyS>().isDead && 
+				    !other.gameObject.GetComponent<EnemyS>().cannotBeHeld){
+					
+					holdTarget = other.gameObject;
+					chompHead.timeToTriggerChomp = other.GetComponent<EnemyS>().requiredAbsorbTime;
+					//CameraShakeS.C.TimeSleep(grabTimeSleep);
+					
+				}
+			}
+			
+			//print ("Hit Pickup!");
+			
+		}
+		if (other.gameObject.tag == "Wall" && launched){
+			//	print("ehhh");
+			ReturnToHowie();	
+		}
+		
+	}
+
 	public void CheckHoldTarget() {
 		
 		// remove held enemy if dead
-		if (yarla.holdTarget != null){
-			if (yarla.holdTarget.GetComponent<EnemyS>().isDead){
-				yarla.holdTarget.transform.parent = null;
-				Vector3 resetTargetPos = yarla.holdTarget.transform.position;
-				resetTargetPos.z = yarla.enemyCapturedZ;
-				yarla.holdTarget.transform.position = resetTargetPos;
-				yarla.holdTarget = null;
+		if (holdTarget != null){
+			if (holdTarget.GetComponent<EnemyS>().isDead){
+				holdTarget.transform.parent = null;
+				Vector3 resetTargetPos = holdTarget.transform.position;
+				resetTargetPos.z = enemyCapturedZ;
+				holdTarget.transform.position = resetTargetPos;
+				holdTarget = null;
 			}
 		}
 		
 		// turn off holding once no held target
-		if (yarla.holdTarget == null){
+		if (holdTarget == null){
 			
-			yarla.holdTime = 0;
-			yarla.holding = false;
+			holdTime = 0;
+			holding = false;
 			
 		}
 		
 	}
 
+	public void OnTriggerExit ( Collider other ){
+		
+		if (other.gameObject == holdTarget && !holding){
+			holdTarget = null;
+		}
+	}
+
 	public void ReturnToHowie() {
 		
-		yarla.rigidbody.velocity = Vector3.zero;
+		rigidbody.velocity = Vector3.zero;
 		//print ("MOVED!");
-		yarla.transform.position = yarla.howie.transform.position;
-		yarla.launchMaxCooldown = yarla.launchMaxTime;
-		yarla.launched = false;
+		yarla.transform.position = howie.transform.position;
+		launchMaxCooldown = launchMaxTime;
+		launched = false;
 		
 	}
 }

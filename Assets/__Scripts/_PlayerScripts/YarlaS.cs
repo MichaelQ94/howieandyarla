@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class YarlaS : MonoBehaviour {
 
-	public GameObject	holdTarget;
+	//public GameObject	holdTarget;
 
 	public float		throwMultiplierX = 1000;
 	public float		throwMultiplierY = 1000;
@@ -12,29 +12,30 @@ public class YarlaS : MonoBehaviour {
 	public float		prevXPos;
 	public float		prevYPos;
 
-	public bool			holding = false;
+	//public bool			holding = false;
 
-	public float 		grabTimeSleep = 0.1f;
+	//public float 		grabTimeSleep = 0.1f;
 
 	public float 		velCountdownMax = 0.01f;
 	public float 		velCountdown = 0.01f;
 
-	public bool			launchAxisDown = false;
-	public bool			launched = false;
-	public float 		launchSpeed = 1000;
+	
+	//public bool		launchAxisDown = false;
+	//public bool		launched = false;
+	//public float 		launchSpeed = 1000;
 	public float		launchMaxTime = 0.2f;
 	public float		launchMaxCooldown = 0.2f;
 
-	public float		sweetSpot = 0.4f;
-	public float 		holdTime = 0;
-	public float		maxThrowVel = 10000;
+	//public float		sweetSpot = 0.4f;
+	//public float 		holdTime = 0;
+	//public float		maxThrowVel = 10000;
 
-	public float		kickBackMultiplier = 0.25f;
-	public float		kickBackTime = 0.2f;
+	//public float		kickBackMultiplier = 0.25f;
+	//public float		kickBackTime = 0.2f;
 
-	public float		throwExceedMult = 0.75f;
+	//public float		throwExceedMult = 0.75f;
 
-	public float 		enemyCapturedZ;
+	//public float 		enemyCapturedZ;
 
 	public float 		launchAnimRate = 0.1f;
 	public float 		launchAnimRateMax = 0.1f;
@@ -88,6 +89,9 @@ public class YarlaS : MonoBehaviour {
 
 	void OnTriggerEnter ( Collider other ){
 
+		yarlaCtrl.OnTriggerEnter(other);
+
+		/*
 		if (other.gameObject.tag == "Enemy" && !holding){
 
 		if (holdTarget == null){
@@ -120,23 +124,23 @@ public class YarlaS : MonoBehaviour {
 		if (other.gameObject.tag == "Wall" && launched){
 			//	print("ehhh");
 			ReturnToHowie();	
-	}
-
+			*/
 	}
 
 	void OnTriggerExit ( Collider other ){
 
+		yarlaCtrl.OnTriggerExit(other);
+
+		/*
 		if (other.gameObject == holdTarget && !holding){
 			holdTarget = null;
-	}
-
+		*/
 	}
 
 	void ResetPosition () {
 
 		transform.localPosition = Vector3.zero;
-
-
+	
 	}
 
 	void LookMean () {
@@ -426,6 +430,7 @@ public class YarlaS : MonoBehaviour {
 
 	}
 
+	/*
 	void ReturnToHowie() {
 
 		rigidbody.velocity = Vector3.zero;
@@ -434,10 +439,11 @@ public class YarlaS : MonoBehaviour {
 		launchMaxCooldown = launchMaxTime;
 		launched = false;
 
-	}
+	}*
 
+	/*
 	void CheckHoldTarget() {
-
+		
 		// remove held enemy if dead
 		if (holdTarget != null){
 			if (holdTarget.GetComponent<EnemyS>().isDead){
@@ -457,6 +463,6 @@ public class YarlaS : MonoBehaviour {
 
 		}
 
-	}
+	}*/
 		
 }
