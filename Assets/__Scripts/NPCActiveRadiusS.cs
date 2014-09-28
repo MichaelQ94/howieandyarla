@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Events;
 
 public class NPCActiveRadiusS : MonoBehaviour {
 
@@ -9,19 +10,21 @@ public class NPCActiveRadiusS : MonoBehaviour {
 	public bool	howieIsInRange;
 	public NPCS parent;
 	public NPCActiveRadiusS() {
-		parent = transform.parent.gameObject.GetComponent<NPCS>();
+	}
+	void Start() {
+		parent = transform.parent.gameObject.GetComponent<NPCS> ();
 	}
 	void OnTriggerEnter (Collider other){
-		howieIsInRange = EventHandlers.checkIfPlayerCollision (other);
+		howieIsInRange = Environment.checkIfPlayerCollision (other);
 	}
 	void Update() {
-		if (howieIsInRange && EventHandlers.shouldTalk()) {
+		if (howieIsInRange && Dialogue.shouldTalk()) {
 			parent.speak();
 		}
 	}
 
 
 	void OnTriggerExit (Collider other){
-		howieIsInRange = EventHandlers.checkIfPlayerCollision (other);
+		howieIsInRange = Environment.checkIfPlayerCollision (other);
 	}
 }

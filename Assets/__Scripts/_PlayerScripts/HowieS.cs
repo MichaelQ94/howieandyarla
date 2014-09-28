@@ -68,25 +68,20 @@ public class HowieS : MonoBehaviour {
 	public int purpleEnergyAmt = 0;
 
 	public YarlaS	yarla;
-
-	public HowieCtrl	howieCtrl;
-
-	
+	public string platformType;
 	// Use this for initialization
 	void Start () {
 
 		kickBackCountdown = kickBackMax;
 		walkCycleRateCountdown = walkCycleRate;
 		yarla = GameObject.FindGameObjectsWithTag ("YarlaS") [0].GetComponent<YarlaS> ();
-
-		howieCtrl = new HowieCtrl(this);
-		
+		platformType = Events.Environment.getPlatform();
 	}
 	
 	void Update () {
 		
 		// howie switch needs to be in update to correctly read button down inputs
-		if (!metaActive && inCombat){
+		if (!metaActive){
 			CheckHowieSwitch();
 		}
 		if (!isHowieSolo){
@@ -109,9 +104,64 @@ public class HowieS : MonoBehaviour {
 
 	void ActivateMeta () {
 
-		howieCtrl.ActivateMeta();
+		string[] checkInputs = Input.GetJoystickNames();
+		int numInputs = checkInputs.Length;
 
-	}
+		// check to make sure player has metas equipped
+		if (equippedMetas.Count > 0 && !metaActive){
+
+			if (numInputs > 0){
+
+				// check for platform
+				//same but for pc
+					if (Input.GetButtonDown("Meta1" + platformType)){
+
+						// make sure player has enough energy,
+						// if so subtract and activate
+						if (blueEnergyAmt > equippedMetas[0].blueEnergyReq &&
+						    redEnergyAmt > equippedMetas[0].redEnergyReq &&
+						    purpleEnergyAmt > equippedMetas[0].purpleEnergyReq){
+							
+							blueEnergyAmt -= equippedMetas[0].blueEnergyReq;
+							redEnergyAmt -= equippedMetas[0].redEnergyReq;
+							purpleEnergyAmt -= equippedMetas[0].purpleEnergyReq;
+							
+							equippedMetas[0].Activate ();
+							metaActive = true;
+							currentWalkSprite = 0;
+							
+						}
+						
+					}
+
+				}
+			}
+
+			else{
+
+				// check for activate meta 1 button
+				if (Input.GetKeyDown(KeyCode.Alpha1)){
+					// make sure player has enough energy,
+					// if so subtract and activate
+					if (blueEnergyAmt > equippedMetas[0].blueEnergyReq &&
+					    redEnergyAmt > equippedMetas[0].redEnergyReq &&
+					    purpleEnergyAmt > equippedMetas[0].purpleEnergyReq){
+						
+						blueEnergyAmt -= equippedMetas[0].blueEnergyReq;
+						redEnergyAmt -= equippedMetas[0].redEnergyReq;
+						purpleEnergyAmt -= equippedMetas[0].purpleEnergyReq;
+						
+						equippedMetas[0].Activate ();
+						metaActive = true;
+						currentWalkSprite = 0;
+						
+					}
+				}
+
+			}
+
+		}
+
 
 
 	
@@ -193,13 +243,121 @@ public class HowieS : MonoBehaviour {
 	
 	void Walk () {
 		
-		howieCtrl.Walk();
+		if (knockedBack){
+			
+			kickBackCountdown -= Time.deltaTime;
+			
+			if (kickBackCountdown <= 0){
+				knockedBack = false;
+			}
+			
+		}
+		else{
+			
+			charVel = rigidbody.velocity;
+			charVel.x = Input.GetAxis("Horizontal" + platformType)*maxSpeed*Time.deltaTime;
+			charVel.y = Input.GetAxis("Vertical" + platformType)*maxSpeed*Time.deltaTime;
+			
+			if (yarla.holding){
+				charVel *= chargeSpeedMultiplier;
+			}
+			
+			// speed up if Howie solo!
+			if (isHowieSolo){
+				charVel *= howieSoloSpeedMult;
+			}
+			
+			// set speed back into rigidbody
+			rigidbody.velocity = charVel;
+		}
 		
 	}
 	
 	void MoveHand () {
 		
-		howieCtrl.MoveHand();
+		string[] checkInputs = Input.GetJoystickNames();
+		
+		int inputNumber = checkInputs.Length;
+		if (inputNumber <= 0 && Screen.showCursor){
+			//Screen.showCursor = false;
+		}
+		//print (inputNumber);
+		
+		
+		Vector3 mousePos = CameraShakeS.C.camera.ScreenToWorldPoint(Input.mousePosition);
+		mousePos.z = transform.position.z;
+
+		
+		float mouseDistance = Vector3.Distance(transform.position,mousePos);
+		
+		
+		if (!yarla.launched){
+			if (!yarla.holding){
+				if (inputNumber > 0){
+					handPos.x = Input.GetAxis("SecondHorizontal" + platformType)*maxHandRadius;
+					handPos.y = Input.GetAxis("SecondVertical" + platformType)*maxHandRadius;
+				}
+				else{
+
+					//print (mouseDistance);
+					//print (maxHandRadius/hand.transform.localScale.x);
+
+					if (mouseDistance < (maxHandRadius/hand.transform.localScale.x)){
+						handPos = mousePos - transform.position;
+						handPos.x *= hand.transform.localScale.x;
+						handPos.y *= hand.transform.localScale.y;
+					}
+					else{
+						handPos = mousePos - transform.position;
+						handPos.Normalize();
+						handPos *= maxHandRadius;
+					}
+				}
+			}
+			else{
+				if (inputNumber > 0){
+					handPos.x = Input.GetAxis("SecondHorizontal" + platformType)*maxHandRadius/2;
+					handPos.y = Input.GetAxis("SecondVertical" + platformType)*maxHandRadius/2;	
+				}
+				else{
+					if (mouseDistance < (maxHandRadius/hand.transform.localScale.x)){
+						handPos = mousePos - transform.position;
+						handPos.x *= hand.transform.localScale.x;
+						handPos.y *= hand.transform.localScale.y;
+					}
+					else{
+						handPos = mousePos - transform.position;
+						handPos.Normalize();
+						handPos *= maxHandRadius/2;
+					}
+				}
+			}
+			
+			//print(handPos);
+			
+			// only set handpos if not solo howie, else make it zero!
+			if (!isHowieSolo){
+				hand.transform.localPosition = handPos;
+			}
+			else{
+				hand.transform.localPosition = Vector3.zero;
+			}
+			
+			
+			//print (maxHandRadius*Mathf.Cos(mouseAngle));
+			
+		}
+		
+		//float handDistance = Vector3.Distance(hand.transform.position, transform.position);
+		
+		//float speedDiff = handDistance/maxHandRadius;
+		
+		//handVel = hand.rigidbody.velocity;
+		
+		//handVel.x = Input.GetAxis("SecondHorizontal")*maxHandSpeed*Time.deltaTime;
+		//handVel.y = Input.GetAxis("SecondVertical")*maxHandSpeed*Time.deltaTime;
+		
+		//hand.rigidbody.velocity = handVel;
 		
 	}
 	
@@ -253,7 +411,45 @@ public class HowieS : MonoBehaviour {
 	
 	public void CheckHowieSwitch () {
 		
-		howieCtrl.CheckHowieSwitch();
+		// switch between Howie solo and H&Y at button press
+		
+		// for simplicity's sake, currently you can NOT switch while holding an enemy
+		
+		if (!yarla.holding){
+			
+			// check for platform and switch at button press (A on controller, shift on key)
+			
+			// check if using controller
+			string[] checkInputs = Input.GetJoystickNames();
+			
+			int inputNumber = checkInputs.Length;
+			
+			// if using controller
+			if (inputNumber > 0){
+					if (Input.GetButtonDown("SwitchChar" + platformType)){
+						isHowieSolo=!isHowieSolo;
+						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+						//deactivates/activates chomping ability based on whether howie is solo
+						chompers.renderer.enabled = !isHowieSolo;
+						// always reset current frame to ensure no errors
+						currentWalkSprite = 0;
+					}
+			}
+			// if not using controller
+			else{
+				if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)){
+					if (isHowieSolo){
+						isHowieSolo = false;
+					}
+					else{
+						isHowieSolo = true;
+					}
+					
+					// always reset current frame to ensure no errors
+					currentWalkSprite = 0;
+				}
+			}
+		}
 		
 	}
 
@@ -270,14 +466,6 @@ public class HowieS : MonoBehaviour {
 		}
 		if (energyType == 2){
 			purpleEnergyAmt += EnergyAmt;
-		}
-
-	}
-
-	void DisableCombat () {
-
-		if (!inCombat){
-			isHowieSolo = true;
 		}
 
 	}
@@ -330,6 +518,11 @@ public class HowieS : MonoBehaviour {
 
 		}
 
+	}
+
+	public void ActivateMetamorphosis()
+	{
+		//Activate proper metamorphosis based on the selection made by the user.
 	}
 	
 	public void GameOver (){

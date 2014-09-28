@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Events;
 
 public class NPCS : MonoBehaviour {
 	 
 	// Use this for initialization
 	private LevelS level;
-	private IList<string> phrases;
-	private GameObject trigger;
+	public string[] phrases;
 	private int count = 0;
-	public EventHandlers events = new EventHandlers();
-	public NPCS(IList<string> phrases) {
+	public NPCS(string[] phrases) {
 		this.phrases = phrases;
 	}
 	void Start() {
@@ -21,11 +20,13 @@ public class NPCS : MonoBehaviour {
 
 	}
 	public void speak() {
-		if (count < this.phrases.Count) {
-			print (phrases[count]);
+		Environment.pause (true);
+		if (count < this.phrases.Length) {
+			Dialogue.printMessage(phrases[count]);
 			count++;
 			return;
 		}
-		print(this.phrases[this.phrases.Count-1]);
+		Dialogue.printMessage("");
+		Environment.pause (false);
 	}
 }
