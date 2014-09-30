@@ -46,7 +46,7 @@ public class CameraFollow2D : MonoBehaviour {
 		
 		// change ortho size when charging absorb attack
 		if (!doNotChangeSize){
-			if (attachedChomp.charging && attachedYarla.holding){
+			if (attachedChomp.charging && attachedYarla.yarlaCtrl.holding){
 				if (attachedChomp.timeHeld < attachedChomp.timeToTriggerChomp){
 					camera.orthographicSize = (orthoOriginSize-
 					                           (orthoOriginSize-orthoMinSize)*attachedChomp.timeHeld/attachedChomp.timeToTriggerChomp);

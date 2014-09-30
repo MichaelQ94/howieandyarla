@@ -46,8 +46,8 @@ public class EnemyDetectS : MonoBehaviour {
 		// 3. Enemy closest to chompy head
 
 		// first find held enemy if any
-		if (yarla.holdTarget != null){
-			enemyBeingHeld = yarla.holdTarget;
+		if (yarla.yarlaCtrl.holdTarget != null){
+			enemyBeingHeld = yarla.yarlaCtrl.holdTarget;
 		}
 		else{
 			enemyBeingHeld = null;

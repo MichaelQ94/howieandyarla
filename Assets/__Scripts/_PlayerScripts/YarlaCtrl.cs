@@ -21,11 +21,11 @@ public class YarlaCtrl
 	public float enemyCapturedZ;
 
 	//Launch attributes
-	public float launchSpeed = 1000;
+	public float launchSpeed = 2500;
 	public bool	launchAxisDown = false;
 	public bool	launched = false;
 	public float launchMaxCooldown = 0.2f;
-	public float launchMaxTime = 0.2f;
+	public float launchMaxTime = 0.25f;
 
 
 	public YarlaCtrl ()

@@ -6,8 +6,8 @@ public class YarlaS : MonoBehaviour {
 
 	//public GameObject	holdTarget;
 
-	public float		throwMultiplierX = 1000;
-	public float		throwMultiplierY = 1000;
+	//public float		throwMultiplierX = 1000;
+	//public float		throwMultiplierY = 1000;
 
 	public float		prevXPos;
 	public float		prevYPos;
@@ -146,7 +146,7 @@ public class YarlaS : MonoBehaviour {
 	void LookMean () {
 
 		// for animating on launch
-		if (launched){
+		if (yarlaCtrl.launched){
 			if (currentLaunchFrame < launchAnimFrames.Count - 1){
 				launchAnimRate -= Time.deltaTime;
 				if (launchAnimRate <= 0){

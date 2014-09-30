@@ -79,7 +79,7 @@ public class HowieS : MonoBehaviour {
 		walkCycleRateCountdown = walkCycleRate;
 		yarla = GameObject.FindGameObjectsWithTag ("YarlaS") [0].GetComponent<YarlaS> ();
 
-		howieCtrl = new HowieCtrl(this);
+		howieCtrl = new HowieCtrl (this);
 		
 	}
 	

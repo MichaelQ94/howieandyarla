@@ -77,7 +77,7 @@ public class NewChompS : MonoBehaviour {
 			renderer.enabled = true;
 
 			//have head facing appropriate way
-			if (yarla.holding){
+			if (yarla.yarlaCtrl.holding){
 				if (transform.localPosition.x < 0){
 					renderer.material.SetTextureScale("_MainTex", new Vector2(-1, -1));
 				}
@@ -145,8 +145,8 @@ public class NewChompS : MonoBehaviour {
 	void ChargeAnimation () {
 
 		// fix absorb time based on whether yarla is holding enemy or not
-		if (yarla.holding){
-			timeToTriggerChomp = yarla.holdTarget.GetComponent<EnemyS>().requiredAbsorbTime;
+		if (yarla.yarlaCtrl.holding){
+			timeToTriggerChomp = yarla.yarlaCtrl.holdTarget.GetComponent<EnemyS>().requiredAbsorbTime;
 		}
 		else{
 			if (!charging){

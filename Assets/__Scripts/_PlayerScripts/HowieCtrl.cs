@@ -146,7 +146,7 @@ public class HowieCtrl
 				howie.charVel.y = Input.GetAxis("VerticalPC")*howie.maxSpeed*Time.deltaTime;
 			}
 			
-			if (yarla.holding){
+			if (yarla.yarlaCtrl.holding){
 				howie.charVel *= howie.chargeSpeedMultiplier;
 			}
 			
@@ -167,7 +167,7 @@ public class HowieCtrl
 		
 		// for simplicity's sake, currently you can NOT switch while holding an enemy
 		
-		if (!yarla.holding){
+		if (!yarla.yarlaCtrl.holding){
 			
 			// check for platform and switch at button press (A on controller, shift on key)
 			
@@ -242,8 +242,8 @@ public class HowieCtrl
 		float mouseDistance = Vector3.Distance(howie.transform.position,mousePos);
 		
 		
-		if (!yarla.launched){
-			if (!yarla.holding){
+		if (!yarla.yarlaCtrl.launched){
+			if (!yarla.yarlaCtrl.holding){
 				if (inputNumber > 0){
 					if (Application.platform == RuntimePlatform.OSXEditor || 
 					    Application.platform == RuntimePlatform.OSXPlayer ||
