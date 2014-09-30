@@ -340,6 +340,13 @@ public class GargoyleS : EnemyS {
 			CameraShakeS.C.SmallShake();
 			CameraShakeS.C.TimeSleep(0.02f);
 			
+				if (vulnerable){
+					enemyHealth -= hitWallDamage;
+				}
+				else{
+					shieldHealth -= hitWallDamage;
+				}
+
 			//knockedOut = true;
 			//stunCountdown = stunMax;
 			}
@@ -355,7 +362,12 @@ public class GargoyleS : EnemyS {
 			if (beingThrown || other.gameObject.GetComponent<EnemyS>().beingThrown){
 				CameraShakeS.C.SmallShake();
 				CameraShakeS.C.TimeSleep(0.02f);
-				
+
+
+				other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity,0.4f,throwDamage);
+			
+			
+				EnemyKnockback(-rigidbody.velocity,0.4f,hitWallDamage);
 				//knockedOut = true;
 				//stunCountdown = stunMax;
 			}

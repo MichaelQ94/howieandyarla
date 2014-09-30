@@ -40,14 +40,16 @@ public class EnemyDetectS : MonoBehaviour {
 
 		if (enemiesInRange.Count > 0){
 
+			//print (yarla.yarlaCtrl.holdTarget);
+
 		// order of priority:
 		// 1. Dangerously close enemies
 		// 2. Held enemy
 		// 3. Enemy closest to chompy head
 
 		// first find held enemy if any
-		if (yarla.yarlaCtrl.holdTarget != null){
-			enemyBeingHeld = yarla.yarlaCtrl.holdTarget;
+		if (yarla.holdTarget != null){
+			enemyBeingHeld = yarla.holdTarget;
 		}
 		else{
 			enemyBeingHeld = null;

@@ -27,6 +27,10 @@ public class EnemyS : MonoBehaviour {
 	public float 	shieldRecoverTime;
 	public bool		vulnerable = false; // when true, can be grabbed/thrown/dealt damage
 
+	public float 	throwDamage = 1;
+	//public float 	throwKnockbackVel = 500;
+	public float 	hitWallDamage = 1;
+
 	public Texture	vulnerableTexture;
 
 	public float 	enemyHealth;
@@ -164,17 +168,19 @@ public class EnemyS : MonoBehaviour {
 	void CheckVuln () {
 
 		// shield health stuff
-		if (vulnerable){
-			shieldRecoverTime -= Time.deltaTime;
-			if (shieldRecoverTime <= 0){
-				vulnerable = false;
-				shieldHealth = maxShieldHealth;
+		if (!beingHeld || beingThrown){
+			if (vulnerable){
+				shieldRecoverTime -= Time.deltaTime;
+				if (shieldRecoverTime <= 0){
+					vulnerable = false;
+					shieldHealth = maxShieldHealth;
+				}
 			}
-		}
-		else{
-			if (shieldHealth <= 0){
-				vulnerable = true;
-				shieldRecoverTime = shieldRecoverTimeMax;
+			else{
+				if (shieldHealth <= 0){
+					vulnerable = true;
+					shieldRecoverTime = shieldRecoverTimeMax;
+				}
 			}
 		}
 		

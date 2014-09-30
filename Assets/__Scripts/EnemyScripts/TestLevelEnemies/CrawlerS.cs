@@ -126,7 +126,7 @@ public class CrawlerS : EnemyS {
 
 				movTarget = transform.position;
 
-				// if scared, run away from howie!
+				/*// if scared, run away from howie!
 				if (scared){
 					// change x of target
 					if (transform.position.x > level.howie.GetComponent<HowieS>().transform.position.x){
@@ -145,7 +145,7 @@ public class CrawlerS : EnemyS {
 				}
 
 				// if not scared...
-				else{
+				else{*/
 					//if (howieNearby){
 						// if howie is around, head towards him
 						movTarget.x = level.howie.GetComponent<HowieS>().transform.position.x + randomizeMovTargetMult*Random.insideUnitCircle.x;
@@ -156,7 +156,7 @@ public class CrawlerS : EnemyS {
 						movTarget.x = transform.position.x + randomizeMovTargetMult*Random.insideUnitCircle.x;
 						movTarget.y = transform.position.y + randomizeMovTargetMult*Random.insideUnitCircle.y;
 					//}
-				}
+				//}
 				
 				// when countdown ends, change movtarget to randomize movement
 				changeMovTargetCountdown = Random.Range(changeMovTargetMinTime, changeMovTargetMaxTime);
@@ -173,7 +173,7 @@ public class CrawlerS : EnemyS {
 		// this is the part of the code that actually sets the velocity towards the moveTarget
 		
 		// change speed depending on state of hostility
-		if (!vulnerable){
+		//if (!vulnerable){
 		if (attacking || scared){
 				if (onFire){
 					rigidbody.velocity = (movTarget - transform.position).normalized*-attackSpeed*Time.deltaTime;
@@ -196,7 +196,7 @@ public class CrawlerS : EnemyS {
 
 				//print (movTarget - transform.position);
 		}
-		}
+		//}
 
 		// if in reverse time mode, count down that time
 		if (attackReverseCountdown > 0){
@@ -212,7 +212,7 @@ public class CrawlerS : EnemyS {
 		if (isDead){
 			renderer.material.SetTexture("_MainTex", deadTexture);
 		}
-		else if (vulnerable){
+		else if (beingHeld || beingThrown){
 			if (vulnerableFrameRateCountdown > 0){
 				vulnerableFrameRateCountdown -= Time.deltaTime;
 			}
@@ -306,7 +306,13 @@ public class CrawlerS : EnemyS {
 		if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Enemy"){
 
 			// if being thrown, get stunned! otherwise just bounce off
-			if (beingThrown || (other.gameObject.tag == "Enemy" && other.gameObject.GetComponent<EnemyS>().beingThrown)){
+			if (beingThrown){ 
+					if (other.gameObject.tag == "Enemy"){
+
+						other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity,0.4f,throwDamage);
+					}
+
+					EnemyKnockback(-rigidbody.velocity,0.4f,hitWallDamage);
 				/*knockedOut = true;
 				stunCountdown = stunMax;
 				if (other.gameObject.tag == "Enemy"){
@@ -321,20 +327,7 @@ public class CrawlerS : EnemyS {
 			
 		}
 
-		// getting hit by Yarla -- trigger stun to make vulnerable
-		if (other.gameObject.tag == "Yarla"){
-			//stunCountdown = stunMax;
-			//knockedOut = true;
-		}
-
-		// getting hit by projectile
-		if (other.gameObject.tag == "Projectile" || other.gameObject.tag == "Smokeshot"){
-
-			if (other.gameObject.GetComponent<ProjectileS>().friendly){
-				vulnerable = true;
-			}
-
-		}
+		
 
 	}
 	

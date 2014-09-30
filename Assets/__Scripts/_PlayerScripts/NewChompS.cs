@@ -176,7 +176,9 @@ public class NewChompS : MonoBehaviour {
 
 	void ResetPosition () {
 
-		transform.localPosition = Vector3.zero;
+		Vector3 resetPos = Vector3.zero;
+		resetPos.z = transform.localPosition.z;
+		transform.localPosition = resetPos;
 		
 	}
 
@@ -229,7 +231,6 @@ public class NewChompS : MonoBehaviour {
 	// this charges the chomp attack when button is held
 	public void ChompAttack () {
 
-		//print (Input.GetAxisRaw("Fire2Mac"));
 
 		if (enemyDetector.enemyToChomp != null){
 			chompTarget = enemyDetector.enemyToChomp;
@@ -246,53 +247,60 @@ public class NewChompS : MonoBehaviour {
 		}
 		// then activate charging camera shake
 		else{
-			if (charging){
+			if (charging && yarla.holding){
 				CameraShakeS.C.continuousShaking = true;
 				CameraShakeS.C.shake_intensity = 0.1f;
 			}
 		}
 
+		// set timeheld to zero if not holding enemy
+		if (!yarla.holding){
+			timeHeld = 0;
+		}
+
 
 		if (chompTarget != enemyDetector.enemyBeingHeld){
-		if (attackTime < attackTimeMax){
-
-			if (attackTime == 0){
-				// launch chompy head at enemy
-				// this is the code that actually triggers the attack and makes the bite move
-				if (chompTarget != null){
-
-
-
-				Vector3	attackPos = chompTarget.transform.position;
-				attackPos.z = transform.position.z;
-				
-				
-				rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*Time.deltaTime;
-
-
-					// give Howie a bit of momentum in dir of bite too
-					howie.KnockBack(0.1f);
-					howie.rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*howieMovMult*Time.deltaTime;
-
-					// set charge delay to prevent double attacks
-					chargeDelay = chargeDelayMax;
-
+			if (attackTime < attackTimeMax){
+	
+				if (attackTime == 0){
+					// launch chompy head at enemy
+					// this is the code that actually triggers the attack and makes the bite move
+					if (chompTarget != null && (!yarla.holding || (yarla.holding && charging))){
+	
+	
+	
+					Vector3	attackPos = chompTarget.transform.position;
+					attackPos.z = transform.position.z;
+					
+					
+					rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*Time.deltaTime;
+	
+	
+						// give Howie a bit of momentum in dir of bite too
+						howie.KnockBack(0.1f);
+						howie.rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*howieMovMult*Time.deltaTime;
+	
+							// set charge delay to prevent double attacks
+						chargeDelay = chargeDelayMax;
+	
+					}
 				}
-			}
-
-			attackTime += Time.deltaTime;
+	
+				attackTime += Time.deltaTime;
 
 				// turn on collider ONLY WHEN ATTACKING
 				collider.enabled = true;
-		}
-		else{
-			attacking = false;
+			}
+			else{
 
+				attacking = false;
+	
 				// turn off collider when not attacking
 				collider.enabled = false;
-		}
+			}
 		}
 		else{
+			//print ("Enemy being held");
 			if (attackTime < attackTimeHoldMax){
 				
 				if (attackTime == 0){
@@ -316,12 +324,15 @@ public class NewChompS : MonoBehaviour {
 						// set charge delay to prevent double attacks
 						chargeDelay = chargeDelayMax;
 
-						// absorb enemy if charged and enemy is stunned/weakened
+						// absorb enemy if charged and enemy is vulnerable
 						if (!targetEnemyScript.cannotBeAbsorbed && capturedTimeHeld > timeToTriggerChomp){
+							//print ("Absorb");
 							AbsorbEnemy(targetEnemyScript);
 						}
 						// Damage held enemy if not absorbable
 						else{
+							//print ("No Absorb");
+							//print (capturedTimeHeld + timeToTriggerChomp);
 							DamageEnemy(targetEnemyScript);
 						}
 					}
@@ -354,7 +365,7 @@ public class NewChompS : MonoBehaviour {
 
 				chompButtonHeld = true; // set button down to true
 
-					if (charging && chargeDelay <= 0){
+					if (charging && chargeDelay <= 0 && yarla.holding){
 				
 						timeHeld += Time.deltaTime;
 
@@ -362,7 +373,7 @@ public class NewChompS : MonoBehaviour {
 					}
 
 				//perform initial attack 
-				if (!attacking && chompTarget != enemyDetector.enemyBeingHeld){
+				if (!attacking && !yarla.holding){
 
 						if (!charging && chompTarget != null){
 
@@ -423,7 +434,7 @@ public class NewChompS : MonoBehaviour {
 				
 				chompButtonHeld = true; // set button down to true
 				
-				if (charging && chargeDelay <= 0){
+				if (charging && chargeDelay <= 0 && yarla.holding){
 					
 					timeHeld += Time.deltaTime;
 					
@@ -431,7 +442,7 @@ public class NewChompS : MonoBehaviour {
 				}
 				
 				//perform initial attack 
-				if (!attacking && chompTarget != enemyDetector.enemyBeingHeld){
+				if (!attacking && !yarla.holding){
 					
 					if (!charging && chompTarget != null){
 						
@@ -467,7 +478,7 @@ public class NewChompS : MonoBehaviour {
 							attacking = true;
 							
 							
-							
+
 						}
 						
 					}

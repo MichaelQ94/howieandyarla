@@ -6,6 +6,10 @@ public class YarlaS : MonoBehaviour {
 
 	public GameObject	holdTarget;
 
+	public float 		yarlaDefaultX = 0.3f;
+	public float 		yarlaDefaultY = 0.2f;
+	public float 		yarlaZ = -1;
+
 	//public float		throwMultiplierX = 1000;
 	//public float		throwMultiplierY = 1000;
 
@@ -136,7 +140,11 @@ public class YarlaS : MonoBehaviour {
 
 	void ResetPosition () {
 
-		transform.localPosition = Vector3.zero;
+		Vector3 resetPos = Vector3.zero;
+		resetPos.x = yarlaDefaultX;
+		resetPos.y = yarlaDefaultY;
+		resetPos.z = yarlaZ;
+		transform.localPosition = resetPos;
 
 
 	}
@@ -144,7 +152,7 @@ public class YarlaS : MonoBehaviour {
 	void LookMean () {
 
 		// for animating on launch
-		if (yarlaCtrl.launched){
+		if (launched){
 			if (currentLaunchFrame < launchAnimFrames.Count - 1){
 				launchAnimRate -= Time.deltaTime;
 				if (launchAnimRate <= 0){
@@ -432,7 +440,9 @@ public class YarlaS : MonoBehaviour {
 
 		rigidbody.velocity = Vector3.zero;
 		//print ("MOVED!");
-		transform.position = howie.transform.position;
+		Vector3 resetPos = howie.transform.position;
+		resetPos.z = yarlaZ;
+		transform.position = resetPos;
 		launchMaxCooldown = launchMaxTime;
 		launched = false;
 

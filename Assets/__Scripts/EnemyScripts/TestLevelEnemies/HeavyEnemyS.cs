@@ -80,7 +80,7 @@ public class HeavyEnemyS : EnemyS {
 	}
 
 	// check if howie is in attack range
-	public bool isHowieAround(){
+	/*public bool isHowieAround(){
 		
 		float howieDistance = Vector3.Distance(new Vector3(level.howie.GetComponent<HowieS>().transform.position.x,
 		                                                   level.howie.GetComponent<HowieS>().transform.position.y,
@@ -93,7 +93,7 @@ public class HeavyEnemyS : EnemyS {
 			return false;
 		}
 		
-	}
+	}*/
 
 	void WalkAround () {
 
@@ -106,16 +106,16 @@ public class HeavyEnemyS : EnemyS {
 				Vector3 moveTarget;
 					
 				// if howie is around, move around randomly
-				if (isHowieAround()){
+				//if (isHowieAround()){
 	
 					moveTarget = transform.position;
 	
 					moveTarget.x += Random.insideUnitCircle.x*walkTargetRandomizationMult;
 					moveTarget.y += Random.insideUnitCircle.y*walkTargetRandomizationMult;
 	
-				}
+				//}
 					// if howie not around, move towards general vicinity
-				else{
+				/*else{
 	
 					moveTarget = level.howie.GetComponent<HowieS>().transform.position;
 					
@@ -123,7 +123,7 @@ public class HeavyEnemyS : EnemyS {
 					moveTarget.y += Random.insideUnitCircle.y*walkTargetRandomizationMult/2;
 					moveTarget.z = transform.position.z;
 	
-					}
+					}*/
 	
 				// once move target is set, change walk vel to reflect new destination
 				walkingVel = (moveTarget - transform.position).normalized*walkSpeed;
@@ -176,7 +176,7 @@ public class HeavyEnemyS : EnemyS {
 
 	void TriggerAttacks () {
 
-		if (isHowieAround()){
+		//if (isHowieAround()){
 
 			// count down time until attack start
 			if (!attacking && !charging){
@@ -259,7 +259,7 @@ public class HeavyEnemyS : EnemyS {
 					renderer.material.SetTexture("_MainTex", attackingTextures[currentAttackingTexture]);
 				}
 			}
-		}
+		//}
 
 	}
 
@@ -288,13 +288,19 @@ public class HeavyEnemyS : EnemyS {
 		if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Enemy"){
 			
 			// if being thrown, get stunned! otherwise just bounce off
-			if (beingThrown || (other.gameObject.tag == "Enemy" && other.gameObject.GetComponent<EnemyS>().beingThrown)){
-				//knockedOut = true;
-				//stunCountdown = stunMax;
+			if (beingThrown){ 
 				if (other.gameObject.tag == "Enemy"){
-					//other.gameObject.GetComponent<EnemyS>().knockedOut = true;
-					//other.gameObject.GetComponent<EnemyS>().stunCountdown = stunMax;
+					
+					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity,0.4f,throwDamage);
 				}
+				
+				EnemyKnockback(-rigidbody.velocity,0.4f,hitWallDamage);
+				/*knockedOut = true;
+				stunCountdown = stunMax;
+				if (other.gameObject.tag == "Enemy"){
+					other.gameObject.GetComponent<EnemyS>().knockedOut = true;
+					other.gameObject.GetComponent<EnemyS>().stunCountdown = stunMax;
+				}*/
 			}
 			else{
 				// bouncing code should be adjusted in future to trigger depending on contact point

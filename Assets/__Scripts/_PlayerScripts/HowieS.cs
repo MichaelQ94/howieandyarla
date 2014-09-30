@@ -24,6 +24,9 @@ public class HowieS : MonoBehaviour {
 	public bool			knockedBack = false;
 	public float		kickBackMax = 0.2f;
 	public float		kickBackCountdown = 0.2f;
+
+	public float 		defaultYarlaPosX;
+	public float 		defaultYarlaPosY;
 	
 	//public float 		mouseSensitivity = 2.5f;
 	
@@ -123,11 +126,13 @@ public class HowieS : MonoBehaviour {
 				//same but for pc
 					if (Input.GetButtonDown("Meta1" + platformType)){
 
+					print ("AHHH");
+
 						// make sure player has enough energy,
 						// if so subtract and activate
-						if (blueEnergyAmt > equippedMetas[0].blueEnergyReq &&
-						    redEnergyAmt > equippedMetas[0].redEnergyReq &&
-						    purpleEnergyAmt > equippedMetas[0].purpleEnergyReq){
+						if (blueEnergyAmt >= equippedMetas[0].blueEnergyReq &&
+						    redEnergyAmt >= equippedMetas[0].redEnergyReq &&
+						    purpleEnergyAmt >= equippedMetas[0].purpleEnergyReq){
 							
 							blueEnergyAmt -= equippedMetas[0].blueEnergyReq;
 							redEnergyAmt -= equippedMetas[0].redEnergyReq;
@@ -150,9 +155,9 @@ public class HowieS : MonoBehaviour {
 				if (Input.GetKeyDown(KeyCode.Alpha1)){
 					// make sure player has enough energy,
 					// if so subtract and activate
-					if (blueEnergyAmt > equippedMetas[0].blueEnergyReq &&
-					    redEnergyAmt > equippedMetas[0].redEnergyReq &&
-					    purpleEnergyAmt > equippedMetas[0].purpleEnergyReq){
+					if (blueEnergyAmt >= equippedMetas[0].blueEnergyReq &&
+					    redEnergyAmt >= equippedMetas[0].redEnergyReq &&
+					    purpleEnergyAmt >= equippedMetas[0].purpleEnergyReq){
 						
 						blueEnergyAmt -= equippedMetas[0].blueEnergyReq;
 						redEnergyAmt -= equippedMetas[0].redEnergyReq;
@@ -339,15 +344,20 @@ public class HowieS : MonoBehaviour {
 					}
 				}
 			}
+
+			handPos.z = yarla.yarlaZ;
 			
 			//print(handPos);
 			
 			// only set handpos if not solo howie, else make it zero!
 			if (!isHowieSolo){
+
 				hand.transform.localPosition = handPos;
 			}
 			else{
-				hand.transform.localPosition = Vector3.zero;
+				handPos.x = 0;
+				handPos.z = 0;
+				hand.transform.localPosition = handPos;
 			}
 			
 			
@@ -433,28 +443,43 @@ public class HowieS : MonoBehaviour {
 			
 			// if using controller
 			if (inputNumber > 0){
-					if (Input.GetButtonDown("SwitchChar" + platformType)){
-						isHowieSolo=!isHowieSolo;
+					if (Input.GetButton("SwitchChar" + platformType)){
+					if (!isHowieSolo){
+						isHowieSolo=true;
 						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
 						//deactivates/activates chomping ability based on whether howie is solo
-						chompers.renderer.enabled = !isHowieSolo;
+						chompers.renderer.enabled = false;
 						// always reset current frame to ensure no errors
 						currentWalkSprite = 0;
 					}
+				}
+				else{
+					if (isHowieSolo){
+						isHowieSolo = false;
+						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+						//deactivates/activates chomping ability based on whether howie is solo
+						chompers.renderer.enabled = true;
+						// always reset current frame to ensure no errors
+						currentWalkSprite = 0;
+					}
+				}
 			}
 			// if not using controller
 			else{
-				if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)){
-					if (isHowieSolo){
-						isHowieSolo = false;
-					}
-					else{
+				if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)){
+
+					if (!isHowieSolo){
 						isHowieSolo = true;
+						currentWalkSprite = 0;
 					}
-					
-					// always reset current frame to ensure no errors
-					currentWalkSprite = 0;
+
 				}
+					else{
+						if (isHowieSolo){
+							isHowieSolo = false;
+							currentWalkSprite = 0;
+						}
+					}
 			}
 		}
 		
