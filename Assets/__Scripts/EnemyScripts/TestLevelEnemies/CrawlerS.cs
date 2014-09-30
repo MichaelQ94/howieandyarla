@@ -72,13 +72,12 @@ public class CrawlerS : EnemyS {
 		UpdateEnemy();
 
 		if (!isDead){
-			if (!beingHeld && !beingThrown && !knockedOut && !hitStunned){
+			if (!beingHeld && !beingThrown && !hitStunned){
 				if (!scared){
 					TriggerAttacks();
 				}
 				MoveAround();
 			}
-			ManageVulnerability();
 		}
 		
 		ManageSprite();
@@ -147,16 +146,16 @@ public class CrawlerS : EnemyS {
 
 				// if not scared...
 				else{
-					if (howieNearby){
+					//if (howieNearby){
 						// if howie is around, head towards him
 						movTarget.x = level.howie.GetComponent<HowieS>().transform.position.x + randomizeMovTargetMult*Random.insideUnitCircle.x;
 						movTarget.y = level.howie.GetComponent<HowieS>().transform.position.y + randomizeMovTargetMult*Random.insideUnitCircle.y;
-					}
-					else{
+					//}
+					//else{
 						// if not scared and howie's not around, move idly and randomly!
 						movTarget.x = transform.position.x + randomizeMovTargetMult*Random.insideUnitCircle.x;
 						movTarget.y = transform.position.y + randomizeMovTargetMult*Random.insideUnitCircle.y;
-					}
+					//}
 				}
 				
 				// when countdown ends, change movtarget to randomize movement
@@ -174,7 +173,7 @@ public class CrawlerS : EnemyS {
 		// this is the part of the code that actually sets the velocity towards the moveTarget
 		
 		// change speed depending on state of hostility
-		if (invulnerable){
+		if (!vulnerable){
 		if (attacking || scared){
 				if (onFire){
 					rigidbody.velocity = (movTarget - transform.position).normalized*-attackSpeed*Time.deltaTime;
@@ -208,52 +207,23 @@ public class CrawlerS : EnemyS {
 
 	}
 
-	void ManageVulnerability () {
-
-		//placing scared stuff in here too
-		float distanceToHowie = Vector3.Distance(new Vector3(level.howie.GetComponent<HowieS>().transform.position.x,
-		                                                     level.howie.GetComponent<HowieS>().transform.position.y,
-		                                                     transform.position.z), transform.position);
-		if (distanceToHowie < 30){
-			howieNearby = true;
-		}
-		else{
-			howieNearby = false;
-		}
-
-		// took out crawler detection so following code is out of date
-		/*
-		if (howieNearby){
-			if (activeRad.otherCrawlers.Count > 0){
-				scared = false;
-			}
-			else{
-				scared = true;
-			}
-		}
-		else{
-			scared = false;
-		}*/
-
-		if (knockedOut || beingHeld || onFire){
-			invulnerable = false;
-			if (!beingHeld){
-				renderer.material = vulnMat;
-			}
-		}
-		else{
-			invulnerable = true;
-			if (!beingHeld){
-				renderer.material = invulnMat;
-			}
-		}
-
-	}
-
 	void ManageSprite () {
 
 		if (isDead){
 			renderer.material.SetTexture("_MainTex", deadTexture);
+		}
+		else if (vulnerable){
+			if (vulnerableFrameRateCountdown > 0){
+				vulnerableFrameRateCountdown -= Time.deltaTime;
+			}
+			else{
+				vulnerableFrameRateCountdown = vulnerableFrameRate;
+				currentVulnerableTexture++;
+				if (currentVulnerableTexture > vulnerableTextures.Count-1){
+					currentVulnerableTexture = 0;
+				}
+			}
+			renderer.material.SetTexture("_MainTex", vulnerableTextures[currentVulnerableTexture]);;
 		}
 		else{
 
@@ -273,7 +243,7 @@ public class CrawlerS : EnemyS {
 				renderer.material.SetTextureScale("_MainTex",new Vector2(-1,-1));
 			}
 
-			if (invulnerable){
+
 			if (attacking){
 				if (attackingFrameRateCountdown > 0){
 					attackingFrameRateCountdown -= Time.deltaTime;
@@ -300,23 +270,11 @@ public class CrawlerS : EnemyS {
 					}
 					renderer.material.SetTexture("_MainTex", walkTextures[currentWalkTexture]);
 				}
-			}
-				else{
-					if (vulnerableFrameRateCountdown > 0){
-						vulnerableFrameRateCountdown -= Time.deltaTime;
-					}
-					else{
-						vulnerableFrameRateCountdown = vulnerableFrameRate;
-						currentVulnerableTexture++;
-						if (currentVulnerableTexture > vulnerableTextures.Count-1){
-							currentVulnerableTexture = 0;
-						}
-					}
-					renderer.material.SetTexture("_MainTex", vulnerableTextures[currentVulnerableTexture]);
-				}
-			}
 			
+				
 		}
+			
+	}
 	
 
 	void OnCollisionEnter (Collision other){
@@ -349,12 +307,12 @@ public class CrawlerS : EnemyS {
 
 			// if being thrown, get stunned! otherwise just bounce off
 			if (beingThrown || (other.gameObject.tag == "Enemy" && other.gameObject.GetComponent<EnemyS>().beingThrown)){
-				knockedOut = true;
+				/*knockedOut = true;
 				stunCountdown = stunMax;
 				if (other.gameObject.tag == "Enemy"){
 					other.gameObject.GetComponent<EnemyS>().knockedOut = true;
 					other.gameObject.GetComponent<EnemyS>().stunCountdown = stunMax;
-				}
+				}*/
 			}
 			else{
 			// bouncing code should be adjusted in future to trigger depending on contact point
@@ -365,15 +323,15 @@ public class CrawlerS : EnemyS {
 
 		// getting hit by Yarla -- trigger stun to make vulnerable
 		if (other.gameObject.tag == "Yarla"){
-			stunCountdown = stunMax;
-			knockedOut = true;
+			//stunCountdown = stunMax;
+			//knockedOut = true;
 		}
 
 		// getting hit by projectile
 		if (other.gameObject.tag == "Projectile" || other.gameObject.tag == "Smokeshot"){
 
 			if (other.gameObject.GetComponent<ProjectileS>().friendly){
-				invulnerable = false;
+				vulnerable = true;
 			}
 
 		}

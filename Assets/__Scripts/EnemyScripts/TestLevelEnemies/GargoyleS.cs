@@ -72,7 +72,7 @@ public class GargoyleS : EnemyS {
 		UpdateEnemy(); // needs to be called in all enemy updates
 
 		// if not stunned or being held, move and shoot!
-		if (!beingHeld && !stunned && !beingThrown && !knockedOut && !isDead){
+		if (!beingHeld && !beingThrown && !isDead){
 			BasicMovement();
 			ShootFireball();
 
@@ -116,11 +116,12 @@ public class GargoyleS : EnemyS {
 				}
 				else{
 	
+					/*
 					// set time we should be moving and turn moving on
 					if (stunCountdown <= 0 && throwStunTime <= 0){
 						moveTime = Random.Range(moveTimeMin,moveTimeMax);
 						enemyMoving = true;
-					}
+					}*/
 	
 				}
 			}
@@ -339,8 +340,8 @@ public class GargoyleS : EnemyS {
 			CameraShakeS.C.SmallShake();
 			CameraShakeS.C.TimeSleep(0.02f);
 			
-			knockedOut = true;
-			stunCountdown = stunMax;
+			//knockedOut = true;
+			//stunCountdown = stunMax;
 			}
 
 			if (!rigidbody.isKinematic){
@@ -355,8 +356,8 @@ public class GargoyleS : EnemyS {
 				CameraShakeS.C.SmallShake();
 				CameraShakeS.C.TimeSleep(0.02f);
 				
-				knockedOut = true;
-				stunCountdown = stunMax;
+				//knockedOut = true;
+				//stunCountdown = stunMax;
 			}
 
 			

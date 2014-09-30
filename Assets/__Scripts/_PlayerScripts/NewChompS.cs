@@ -10,7 +10,7 @@ public class NewChompS : MonoBehaviour {
 	
 	public bool		charging = false; // true if player is charging chomp attack
 	public float	timeHeld = 0; // how long in sec chomp has charged
-	public float	exceedMult = 0.75f; // damage reduction if player holds chomp past sweet spot
+	//public float	exceedMult = 0.75f; // damage reduction if player holds chomp past sweet spot
 
 	public float 	chargeDelay; // offset charge start by small amount of time to prevent double attacks
 	public float 	chargeDelayMax = 0.25f; // what to set charge delay to whenever one attacks
@@ -37,14 +37,16 @@ public class NewChompS : MonoBehaviour {
 	public float attackTimeHoldMax;
 	public float attackTime;
 
-	public float minDamage = 15;
-	public float maxDamageMult = 4;
-	public float holdingDamageMult = 2;
-	public float stunnedDamageMult = 1.5f;
+	//public float minDamage = 15;
+	//public float maxDamageMult = 4;
+	//public float holdingDamageMult = 2;
+	//public float stunnedDamageMult = 1.5f;
+
+	public float biteDamage = 1;
 
 	public float capturedTimeHeld;
 	public float timeToTriggerChomp = 3; 
-	public float timeToTriggerChompNoAbsorb = 1;
+	//public float timeToTriggerChompNoAbsorb = 1;
 
 	public HowieS howie;
 	public YarlaS	yarla;
@@ -147,11 +149,6 @@ public class NewChompS : MonoBehaviour {
 		// fix absorb time based on whether yarla is holding enemy or not
 		if (yarla.yarlaCtrl.holding){
 			timeToTriggerChomp = yarla.yarlaCtrl.holdTarget.GetComponent<EnemyS>().requiredAbsorbTime;
-		}
-		else{
-			if (!charging){
-				timeToTriggerChomp = timeToTriggerChompNoAbsorb;
-			}
 		}
 
 		// this animation code might be kinda ugly
@@ -320,7 +317,7 @@ public class NewChompS : MonoBehaviour {
 						chargeDelay = chargeDelayMax;
 
 						// absorb enemy if charged and enemy is stunned/weakened
-						if (targetEnemyScript.CanBeAbsorbed() && capturedTimeHeld > timeToTriggerChomp){
+						if (!targetEnemyScript.cannotBeAbsorbed && capturedTimeHeld > timeToTriggerChomp){
 							AbsorbEnemy(targetEnemyScript);
 						}
 						// Damage held enemy if not absorbable
@@ -502,12 +499,12 @@ public class NewChompS : MonoBehaviour {
 
 			if (timeHeld <= timeToTriggerChomp){
 
-				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, minDamage*maxDamageMult*(capturedTimeHeld/timeToTriggerChomp));
+				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, biteDamage);
 
 			}
 			else{
 
-				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, minDamage*maxDamageMult*exceedMult);
+				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, biteDamage);
 
 			}
 
@@ -516,7 +513,7 @@ public class NewChompS : MonoBehaviour {
 		else{
 
 			//print ("INITIAL ATTACK");
-			attackTarget.EnemyKnockback(enemyHitBack, 0.1f, minDamage);
+			attackTarget.EnemyKnockback(enemyHitBack, 0.1f, biteDamage);
 
 		}
 

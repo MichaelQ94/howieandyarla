@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class BirdieS : MonoBehaviour {
 
-	public float animRate = 0.4f; // how often to switch frames
+	/*public float animRate = 0.4f; // how often to switch frames
 	public float countdownToNextFrame;
 	public int 	 currentFrame;
 
@@ -44,5 +44,5 @@ public class BirdieS : MonoBehaviour {
 			else{}
 		}
 
-	}
+	}*/
 }

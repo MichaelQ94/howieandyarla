@@ -12,52 +12,46 @@ public class EnemyS : MonoBehaviour {
 	public bool		atSweetSpot = false;
 	
 	public GameObject sprite;
-	
-	public Material	koMat0;
-	public GameObject	birdies;
-	public bool		knockedOut = false;
-	public float 	stunMax = 2.5f;
-	public float 	stunCountdown = 0;
 
+	// for hitstun (slight pause after getting hit)
 	public bool		hitStunned = false;
 	public float 	kickBackMult = 1;
 	public float 	hitStunTime;
+	
+	// I"M GONNA TOTALLY REWORK VULNERABILITY AND HEALTH
+	// WATCH OUT ;P
+
+	public float 	shieldHealth;
+	public float 	maxShieldHealth;
+	public float 	shieldRecoverTimeMax = 2;
+	public float 	shieldRecoverTime;
+	public bool		vulnerable = false; // when true, can be grabbed/thrown/dealt damage
+
+	public Texture	vulnerableTexture;
 
 	public float 	enemyHealth;
 	public float 	maxHealth = 30;
 	public bool 	isDead = false;
 
-	public bool 	invulnerable = false; // when true, don't take damage
-	public bool 	cannotBeHeld = false; // when true, can't be grabbed by Yarla
 	public bool 	cannotBeAbsorbed = false;
-
 	public float 	requiredAbsorbTime = 2;
 
 	public GameObject	shadow;
 
-	public Material	deadMat;
 
 	public Texture deadTexture;
 
 	public float 	deathSleepTime = 0.3f;
 	
 	public bool		beingThrown = false;
+	public bool beingHeld = false;
+	public int originalPhysicsLayer;
 
 	public float 	strength = 0;
 	
-	public bool beingHeld = false;
-
-	public int originalPhysicsLayer;
-
 	public int nutritionValue = 25;
 	public int energyType = 0; // 0 is colorA, 1 is colorB, 2 is colorC (blue, red, purple?)
 	public int energyAmount = 0; // amount to give for metamorphosis
-
-	public float lowHealthMult = 0.5f; // triggers low health threshold
-
-	public float breakOutTime = 2;
-	public float breakOutTimeMax = 2;
-	public float breakOutSpeed = 500;
 
 	public bool  canBeSetOnFire = true;
 	public bool  onFire = false;
@@ -91,15 +85,15 @@ public class EnemyS : MonoBehaviour {
 	public void UpdateEnemy () {
 		
 		FixVelocity();
-		CheckStun();
+		CheckVuln();
 		CheckFire();
 		ManageMat();
 		CheckDeath();
 
 		if (isDead){
 
-			renderer.material = deadMat;
-			birdies.renderer.enabled = false;
+			renderer.material.SetTexture("_MainTex", deadTexture);
+			//birdies.renderer.enabled = false;
 			rigidbody.isKinematic = true;
 			collider.enabled = false;
 
@@ -115,20 +109,6 @@ public class EnemyS : MonoBehaviour {
 		
 	}
 	
-	void OnCollisionEnter ( Collision other ){
-		
-		if (other.gameObject.tag == "Wall" || other.gameObject.tag == "Enemy"){
-			
-			CameraShakeS.C.SmallShake();
-			CameraShakeS.C.TimeSleep(0.02f);
-			
-			knockedOut = true;
-			stunCountdown = stunMax;
-			
-		}
-		
-	}
-	
 	void FixVelocity () {
 		
 		if (Mathf.Abs(rigidbody.velocity.x) <= minimumSpeed
@@ -141,7 +121,7 @@ public class EnemyS : MonoBehaviour {
 	
 	public void ManageMat() {
 		
-		if (atSweetSpot){
+		/*if (atSweetSpot){
 			sprite.renderer.material = throwMaxMat;
 		}
 		
@@ -151,7 +131,7 @@ public class EnemyS : MonoBehaviour {
 				}
 				
 			
-		}
+		}*/
 		
 		
 	}
@@ -181,7 +161,22 @@ public class EnemyS : MonoBehaviour {
 
 	}
 	
-	void CheckStun () {
+	void CheckVuln () {
+
+		// shield health stuff
+		if (vulnerable){
+			shieldRecoverTime -= Time.deltaTime;
+			if (shieldRecoverTime <= 0){
+				vulnerable = false;
+				shieldHealth = maxShieldHealth;
+			}
+		}
+		else{
+			if (shieldHealth <= 0){
+				vulnerable = true;
+				shieldRecoverTime = shieldRecoverTimeMax;
+			}
+		}
 		
 		if (rigidbody.velocity == Vector3.zero){
 			beingThrown = false;
@@ -198,16 +193,16 @@ public class EnemyS : MonoBehaviour {
 		if (beingHeld){
 	
 			shadow.renderer.enabled = false;
-			if (!knockedOut){
+			/*if (!knockedOut){
 				breakOutTime -= Time.deltaTime;
-			}
+			}*/
 
 		}
 		else{
 			shadow.renderer.enabled = renderer.enabled;
 		}
 		
-		if (knockedOut){
+		/*if (knockedOut){
 
 			//print (CanBeAbsorbed());
 
@@ -230,7 +225,7 @@ public class EnemyS : MonoBehaviour {
 				birdies.renderer.enabled = false;
 			}
 			
-		}
+		}*/
 
 		// the following code turns off melee enemy collisions with howie when being held by yarla and being thrown
 		if (originalPhysicsLayer != LayerMask.NameToLayer("IgnorePlayer")){
@@ -258,7 +253,7 @@ public class EnemyS : MonoBehaviour {
 		if (enemyHealth <= 0){
 			isDead = true;
 			CameraShakeS.C.TimeSleep(deathSleepTime);
-				birdies.renderer.enabled = false;
+				//birdies.renderer.enabled = false;
 			//print("IM DEAD");
 		}
 		}
@@ -267,8 +262,6 @@ public class EnemyS : MonoBehaviour {
 
 	public void EnemyKnockback (Vector3 hitBackVel, float stunTime, float damage) {
 
-		// if enemy is not invulnerable
-		if (!invulnerable){
 
 		// to knock back enemy when hit by Yarla's attack
 		// takes vel argument to set velocity to 
@@ -291,15 +284,20 @@ public class EnemyS : MonoBehaviour {
 			enemyHealth -= damage*chompy.stunnedDamageMult;
 		}
 		else{*/
+		if (vulnerable){
 			enemyHealth -= damage;
-		//}
 		}
+		else{
+			shieldHealth -= damage;
+		}
+		//}
+		
 
 	}
 
 	// method to return if enemy can be absorbed by chompy head
 
-	public bool CanBeAbsorbed(){
+	/*public bool CanBeAbsorbed(){
 
 		if (cannotBeAbsorbed){
 			return false;
@@ -314,9 +312,9 @@ public class EnemyS : MonoBehaviour {
 			return false;
 		}
 
-	}
+	}*/
 
-	public bool inWeakenedState(){
+	/*public bool inWeakenedState(){
 
 		if (enemyHealth <= maxHealth*lowHealthMult){
 			return true;
@@ -325,5 +323,5 @@ public class EnemyS : MonoBehaviour {
 			return false;
 		}
 
-	}
+	}*/
 }

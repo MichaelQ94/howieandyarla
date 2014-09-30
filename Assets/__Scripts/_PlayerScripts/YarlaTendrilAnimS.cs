@@ -73,7 +73,7 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 		float fixScaleDist = Vector3.Distance(new Vector3(targetHead.localPosition.x,targetHead.localPosition.y,transform.localPosition.z),
 		                                      transform.localPosition);
 		fixScale.x = fixScaleDist*1.75f;
-		fixScale.y = fixScaleDist/2;
+		fixScale.y = fixScaleDist/3;
 		transform.localScale = fixScale;
 
 		float lookAngle = Mathf.Atan2 (targetHead.localPosition.y,targetHead.localPosition.x) * Mathf.Rad2Deg;

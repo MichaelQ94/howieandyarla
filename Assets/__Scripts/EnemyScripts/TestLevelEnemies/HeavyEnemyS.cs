@@ -67,7 +67,7 @@ public class HeavyEnemyS : EnemyS {
 		UpdateEnemy();
 
 		if (!isDead){
-			if (!beingHeld && !beingThrown && !knockedOut && !hitStunned){
+			if (!beingHeld && !beingThrown && !hitStunned){
 				TriggerAttacks();
 				WalkAround();
 			}
@@ -289,11 +289,11 @@ public class HeavyEnemyS : EnemyS {
 			
 			// if being thrown, get stunned! otherwise just bounce off
 			if (beingThrown || (other.gameObject.tag == "Enemy" && other.gameObject.GetComponent<EnemyS>().beingThrown)){
-				knockedOut = true;
-				stunCountdown = stunMax;
+				//knockedOut = true;
+				//stunCountdown = stunMax;
 				if (other.gameObject.tag == "Enemy"){
-					other.gameObject.GetComponent<EnemyS>().knockedOut = true;
-					other.gameObject.GetComponent<EnemyS>().stunCountdown = stunMax;
+					//other.gameObject.GetComponent<EnemyS>().knockedOut = true;
+					//other.gameObject.GetComponent<EnemyS>().stunCountdown = stunMax;
 				}
 			}
 			else{
