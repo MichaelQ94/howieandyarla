@@ -212,7 +212,7 @@ public class CrawlerS : EnemyS {
 		if (isDead){
 			renderer.material.SetTexture("_MainTex", deadTexture);
 		}
-		else if (beingHeld || beingThrown){
+		else if (beingHeld || beingThrown || hitStunned){
 			if (vulnerableFrameRateCountdown > 0){
 				vulnerableFrameRateCountdown -= Time.deltaTime;
 			}

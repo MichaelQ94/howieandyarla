@@ -49,6 +49,8 @@ public class GargoyleS : EnemyS {
 	public float throwStunTime;
 	public bool stunned = false;
 
+	public Texture	defaultTexture;
+
 	// fireball to spawn
 	public GameObject	fireBall;
 	public float 		accuracyMult = 0.5f; // changes aim slightly and randomly
@@ -72,12 +74,26 @@ public class GargoyleS : EnemyS {
 		UpdateEnemy(); // needs to be called in all enemy updates
 
 		// if not stunned or being held, move and shoot!
-		if (!beingHeld && !beingThrown && !isDead){
+		if (!beingHeld && !beingThrown && !isDead && !hitStunned && !vulnerable){
 			BasicMovement();
 			ShootFireball();
 
 			// intermittent pausing
 			StopMovement();
+		}
+
+		if (!isDead){
+			if (vulnerable){
+				sprite.renderer.material.SetTexture("_MainTex",vulnerableTexture);
+			}
+			else if (hitStunned){
+				sprite.renderer.material.SetTexture("_MainTex",hitStunTexture);
+			}
+			else{
+				if (sprite.renderer.material.mainTexture != defaultTexture){
+					sprite.renderer.material.SetTexture("_MainTex",defaultTexture);
+				}
+			}
 		}
 
 

@@ -147,10 +147,9 @@ public class HowieS : MonoBehaviour {
 					}
 
 				}
-			}
 
 			else{
-
+				
 				// check for activate meta 1 button
 				if (Input.GetKeyDown(KeyCode.Alpha1)){
 					// make sure player has enough energy,
@@ -169,8 +168,11 @@ public class HowieS : MonoBehaviour {
 						
 					}
 				}
-
+				
 			}
+			}
+
+			
 
 		}
 
@@ -196,7 +198,7 @@ public class HowieS : MonoBehaviour {
 		
 		
 		if (Mathf.Abs(rigidbody.velocity.x) > 0
-		    || Mathf.Abs(rigidbody.velocity.y) > 0){
+		    || Mathf.Abs(rigidbody.velocity.y) > 0 || isHowieSolo){
 			
 			walkCycleRateCountdown -= Time.deltaTime;
 			

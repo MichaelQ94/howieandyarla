@@ -32,6 +32,7 @@ public class EnemyS : MonoBehaviour {
 	public float 	hitWallDamage = 1;
 
 	public Texture	vulnerableTexture;
+	public Texture	hitStunTexture;
 
 	public float 	enemyHealth;
 	public float 	maxHealth = 30;
@@ -297,6 +298,10 @@ public class EnemyS : MonoBehaviour {
 			shieldHealth -= damage;
 		}
 		//}
+
+		//camera shake and time sleep
+		CameraShakeS.C.SmallShake();
+		CameraShakeS.C.TimeSleep(0.1f);
 		
 
 	}

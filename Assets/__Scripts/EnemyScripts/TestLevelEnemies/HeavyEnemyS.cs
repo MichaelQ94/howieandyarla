@@ -67,7 +67,7 @@ public class HeavyEnemyS : EnemyS {
 		UpdateEnemy();
 
 		if (!isDead){
-			if (!beingHeld && !beingThrown && !hitStunned){
+			if (!beingHeld && !beingThrown && !hitStunned && !vulnerable){
 				TriggerAttacks();
 				WalkAround();
 			}
@@ -155,6 +155,12 @@ public class HeavyEnemyS : EnemyS {
 		if (isDead){
 			renderer.material.SetTexture("_MainTex", deadTexture);
 		}
+		else if (hitStunned){
+			renderer.material.SetTexture("_MainTex",hitStunTexture);
+		}
+		else if (vulnerable){
+			renderer.material.SetTexture("_MainTex",vulnerableTexture);
+		}
 		else{
 			if (rigidbody.velocity.x > 0){
 				facingRight = true;
@@ -194,6 +200,9 @@ public class HeavyEnemyS : EnemyS {
 			else{
 				// handle charging
 				if (charging){
+
+				// become invulnerable
+				vulnerable = false;
 
 					// animate charge
 					if (changeChargeFrameTime > 0){

@@ -107,6 +107,10 @@ public class YarlaS : MonoBehaviour {
 				//CameraShakeS.C.TimeSleep(grabTimeSleep);
 
 			}
+				if (!other.gameObject.GetComponent<EnemyS>().vulnerable && launched){
+					other.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity*2,0.4f,0);
+					ReturnToHowie();
+				}
 		}
 
 		else if (holdTarget.gameObject.name != other.gameObject.name){
@@ -118,6 +122,10 @@ public class YarlaS : MonoBehaviour {
 				//CameraShakeS.C.TimeSleep(grabTimeSleep);
 				
 			}
+				if (!other.gameObject.GetComponent<EnemyS>().vulnerable && launched){
+					other.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity*2,0.4f,0);
+					ReturnToHowie();
+				}
 		}
 
 		//print ("Hit Pickup!");
