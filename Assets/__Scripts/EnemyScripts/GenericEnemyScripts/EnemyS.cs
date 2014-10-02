@@ -5,9 +5,9 @@ public class EnemyS : MonoBehaviour {
 	
 	public float	minimumSpeed = 2;
 	
-	public Material	defaultMat;
+	//public Material	defaultMat;
 	
-	public Material	throwMaxMat;
+	//public Material	throwMaxMat;
 	
 	public bool		atSweetSpot = false;
 	

@@ -126,7 +126,7 @@ public class HowieS : MonoBehaviour {
 				//same but for pc
 					if (Input.GetButtonDown("Meta1" + platformType)){
 
-					print ("AHHH");
+					//print ("AHHH");
 
 						// make sure player has enough energy,
 						// if so subtract and activate
