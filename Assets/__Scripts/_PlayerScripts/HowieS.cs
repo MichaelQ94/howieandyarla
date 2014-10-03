@@ -352,15 +352,15 @@ public class HowieS : MonoBehaviour {
 			//print(handPos);
 			
 			// only set handpos if not solo howie, else make it zero!
-			if (!isHowieSolo){
+			//if (!isHowieSolo){
 
 				hand.transform.localPosition = handPos;
-			}
-			else{
-				handPos.x = 0;
-				handPos.z = 0;
-				hand.transform.localPosition = handPos;
-			}
+			//}
+		//	else{
+		//		handPos.x = 0;
+		//		handPos.z = 0;
+			//	hand.transform.localPosition = handPos;
+			//}
 			
 			
 			//print (maxHandRadius*Mathf.Cos(mouseAngle));

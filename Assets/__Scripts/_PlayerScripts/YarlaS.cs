@@ -88,7 +88,7 @@ public class YarlaS : MonoBehaviour {
 		else{
 			renderer.enabled = false;
 			collider.enabled = false;
-			ResetPosition();
+			//ResetPosition();
 		}
 	}
 
