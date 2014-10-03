@@ -279,7 +279,7 @@ public class EnemyS : MonoBehaviour {
 		hitStunned = true;
 		if (!rigidbody.isKinematic){
 			rigidbody.velocity = hitBackVel*Time.deltaTime*kickBackMult;
-//				print(rigidbody.velocity);
+				print(rigidbody.velocity);
 		}
 
 		// mult damage depending on stun or held state
@@ -300,30 +300,10 @@ public class EnemyS : MonoBehaviour {
 	// method to return if enemy can be absorbed by chompy head
 
 	public bool CanBeAbsorbed(){
-
-		if (cannotBeAbsorbed){
-			return false;
-		}
-		else if (knockedOut){
-			return true;
-		}
-		else if (inWeakenedState()){
-			return true;
-		}
-		else{
-			return false;
-		}
-
+		return !cannotBeAbsorbed && (knockedOut || inWeakenedState ());
 	}
 
 	public bool inWeakenedState(){
-
-		if (enemyHealth <= maxHealth*lowHealthMult){
-			return true;
-		}
-		else{
-			return false;
-		}
-
+		return enemyHealth <= (maxHealth * lowHealthMult);
 	}
 }

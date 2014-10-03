@@ -17,8 +17,6 @@ public class CameraFollow2D : MonoBehaviour {
 	public NewChompS	attachedChomp;
 	public YarlaS		attachedYarla;
 
-	public bool 		doNotChangeSize; // for debug mode purposes
-
 	void Start () {
 
 		orthoOriginSize = camera.orthographicSize;
@@ -45,23 +43,21 @@ public class CameraFollow2D : MonoBehaviour {
 
 		
 		// change ortho size when charging absorb attack
-		if (!doNotChangeSize){
-			if (attachedChomp.charging && attachedYarla.holding){
-				if (attachedChomp.timeHeld < attachedChomp.timeToTriggerChomp){
-					camera.orthographicSize = (orthoOriginSize-
-					                           (orthoOriginSize-orthoMinSize)*attachedChomp.timeHeld/attachedChomp.timeToTriggerChomp);
-				}
-				else{
-					camera.orthographicSize = orthoMinSize;
-				}
+		if (attachedChomp.charging && attachedYarla.holding){
+			if (attachedChomp.timeHeld < attachedChomp.timeToTriggerChomp){
+				camera.orthographicSize = (orthoOriginSize-
+				                           (orthoOriginSize-orthoMinSize)*attachedChomp.timeHeld/attachedChomp.timeToTriggerChomp);
 			}
 			else{
-				if (camera.orthographicSize < orthoOriginSize){
-					camera.orthographicSize += orthoZoomOutSpeed*Time.deltaTime;
-				}
-				else{
-					camera.orthographicSize = orthoOriginSize;
-				}
+				camera.orthographicSize = orthoMinSize;
+			}
+		}
+		else{
+			if (camera.orthographicSize < orthoOriginSize){
+				camera.orthographicSize += orthoZoomOutSpeed*Time.deltaTime;
+			}
+			else{
+				camera.orthographicSize = orthoOriginSize;
 			}
 		}
 	}

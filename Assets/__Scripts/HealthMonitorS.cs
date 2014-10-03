@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 
 public class HealthMonitorS : MonoBehaviour {
 
-	public HowieS	howie;
+	public HowieS howie;
 
 	// place on GUIText object
 	// changes GUIText to display player health
@@ -16,7 +16,7 @@ public class HealthMonitorS : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		guiText.text = "Health: " + HowieS.health + "/" + HowieS.maxHealth
+		guiText.text = "Health: " + Math.Round(HowieS.health) + "/" + HowieS.maxHealth
 			+ "\nB: " + howie.blueEnergyAmt + " R: " + howie.redEnergyAmt + " P: " + howie.purpleEnergyAmt;
 	
 	}

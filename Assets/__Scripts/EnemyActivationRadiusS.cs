@@ -1,34 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Events; 
 
 public class EnemyActivationRadiusS : MonoBehaviour {
-
 	// place this on sphere collider around enemies who need to detect Howie or other copies of itself
-
-
-	public bool 	howieIsInRange = false;
-
-
-
+	public bool howieIsInRange = false;
+	
 	void OnTriggerEnter (Collider other){
-
-		if (other.gameObject.tag == "Player"){
-			howieIsInRange = true;
-		}
-
-		
-
+		howieIsInRange = Environment.checkIfPlayerCollision (other);
 	}
 
 
 	void OnTriggerExit (Collider other){
-
-		if (other.gameObject.tag == "Player"){
-			howieIsInRange = false;
-		}
-		
-		
-
+		howieIsInRange = !(Environment.checkIfPlayerCollision(other));
 	}
 }
