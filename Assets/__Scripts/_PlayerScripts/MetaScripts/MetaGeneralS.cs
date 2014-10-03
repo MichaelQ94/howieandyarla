@@ -31,5 +31,4 @@ public class MetaGeneralS : MonoBehaviour {
 		activated = true;
 
 	}
-
 }
