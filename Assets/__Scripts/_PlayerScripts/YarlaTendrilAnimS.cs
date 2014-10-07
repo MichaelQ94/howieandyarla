@@ -12,12 +12,23 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 
 	public int 		currentWiggleFrame = 0;
 
+	public YarlaS	attachedYarlaS;
+	public NewChompS attachedChompS;
+
+	public GameObject	attachedHowie;
+
 	public List<Texture>	wiggleFrames;
 
 	// Use this for initialization
 	void Start () {
 
 		originalZ = transform.localPosition.z;
+		if (targetHead.GetComponent<YarlaS>() != null){
+			attachedYarlaS = targetHead.GetComponent<YarlaS>();
+		}
+		if (targetHead.GetComponent<NewChompS>() != null){
+			attachedChompS = targetHead.GetComponent<NewChompS>();
+		}
 	
 	}
 
@@ -65,15 +76,24 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 
 		renderer.enabled = targetHead.gameObject.renderer.enabled;
 
-		Vector3 fixPos = (targetHead.localPosition-transform.localPosition)/2;
+		Vector3 fixPos = (targetHead.localPosition-attachedHowie.transform.localPosition)/2;
 		fixPos.z = originalZ;
 		transform.localPosition = fixPos;
 
 		Vector3	fixScale = transform.localScale;
 		float fixScaleDist = Vector3.Distance(new Vector3(targetHead.localPosition.x,targetHead.localPosition.y,transform.localPosition.z),
 		                                      transform.localPosition);
-		fixScale.x = fixScaleDist*1.75f;
-		fixScale.y = fixScaleDist/3;
+		fixScale.x = fixScaleDist*1.25f;
+		if (attachedChompS != null){
+			if (!attachedChompS.attacking){
+				fixScale.y = fixScaleDist*1.25f;
+			}
+		}
+		if (attachedYarlaS != null){
+			if (!attachedYarlaS.launched){
+				fixScale.y = fixScaleDist*1.25f;
+			}
+		}
 		transform.localScale = fixScale;
 
 		float lookAngle = Mathf.Atan2 (targetHead.localPosition.y,targetHead.localPosition.x) * Mathf.Rad2Deg;

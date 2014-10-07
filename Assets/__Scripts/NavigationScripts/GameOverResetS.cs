@@ -15,6 +15,7 @@ public class GameOverResetS : MonoBehaviour {
 
 		// reset time scale to 1
 		Time.timeScale = 1;
+		levelToResetTo = Events.Environment.reloadScene;
 	
 	}
 	

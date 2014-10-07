@@ -17,13 +17,14 @@ public class NewChompS : MonoBehaviour {
 	
 	public bool		chompButtonHeld = false; // true if button is being held for chomp
 	
-	public GameObject	chompTarget; // what to chomp
+	//public GameObject	chompTarget; // what to chomp
 
 	public EnemyDetectS	enemyDetector; // keeps track on enemies in radius
 	
 	public float 	chompPauseTime = 0.004f; // sleep time in sec for a chomp attack
 
 	public float radiusMult = 0.25f;
+	public float maxDist = 3;
 
 	public float chompVel = 4000;
 	public float hitBackMult = 3000;
@@ -54,6 +55,16 @@ public class NewChompS : MonoBehaviour {
 	public List<Texture>	chompChargeTexts;
 	public int currentTexture;
 
+	public string platformType;
+
+	public float originalScale;
+	public float enemyScale;
+
+	public AudioSource	chompAudioSource;
+	public AudioClip	chompSound;
+	public AudioClip	absorbSound;
+	public float 		soundPitchVar = 0.1f;
+
 	
 	// Use this for initialization
 	void Start () {
@@ -62,6 +73,13 @@ public class NewChompS : MonoBehaviour {
 		yarla = GameObject.FindGameObjectsWithTag ("YarlaS") [0].GetComponent<YarlaS> ();
 
 		attackTimeHoldMax = attackTimeMax/2;
+
+		originalScale = transform.localScale.x;
+
+		
+		platformType = Events.Environment.getPlatform();
+
+		chompAudioSource = GetComponent<AudioSource>();
 	}
 	
 	// update every physics step
@@ -75,11 +93,11 @@ public class NewChompS : MonoBehaviour {
 		// chomp should not work when we are just solo howie!
 		// turn this on and off appropriately
 		
-		if (!howie.isHowieSolo && !howie.metaActive){			
+		if (!howie.isHowieSolo && !howie.metaActive && !howie.isTransforming){			
 			renderer.enabled = true;
 
 			//have head facing appropriate way
-			if (yarla.yarlaCtrl.holding){
+			if (yarla.holding){
 				if (transform.localPosition.x < 0){
 					renderer.material.SetTextureScale("_MainTex", new Vector2(-1, -1));
 				}
@@ -124,7 +142,7 @@ public class NewChompS : MonoBehaviour {
 		// if chompy head collides with enemy trigger, check if attacking and deal damage
 		if (other.gameObject.tag == "Enemy"){
 
-			if (attacking && chompTarget != enemyDetector.enemyBeingHeld){
+			if (attacking){
 
 				DamageEnemy(other.gameObject.GetComponent<EnemyS>());
 
@@ -156,6 +174,7 @@ public class NewChompS : MonoBehaviour {
 		// for each enemy
 
 		if (charging){
+
 			for (int i = 0; i < chompChargeTexts.Count; i++){
 
 				if (i > currentTexture && timeHeld >= timeToTriggerChomp/(chompChargeTexts.Count-i)){
@@ -163,9 +182,33 @@ public class NewChompS : MonoBehaviour {
 				}
 
 			}
+
+			/*if (yarla.holding){
+			float newSize = originalScale;
+
+			if (timeHeld < timeToTriggerChomp){
+
+			 newSize = originalScale + (yarla.holdTarget.transform.localScale.x-originalScale)*
+					(timeHeld/timeToTriggerChomp);
+			}
+			else{
+				 newSize = yarla.holdTarget.transform.localScale.x;
+			}
+
+			transform.localScale = new Vector3(newSize,newSize,transform.localScale.z);
+			}*/
+
 		}
 		else{
-			currentTexture = 0;
+
+			//transform.localScale = new Vector3(originalScale,originalScale,transform.localScale.z);
+
+			if (attacking){
+				currentTexture = 2;
+			}
+			else{
+				currentTexture = 0;
+			}
 		}
 
 		//print(currentTexture);
@@ -186,6 +229,8 @@ public class NewChompS : MonoBehaviour {
 
 		if (!attacking){
 
+
+
 			// turn off collider while not attacking
 			collider.enabled = false;
 
@@ -199,6 +244,9 @@ public class NewChompS : MonoBehaviour {
 
 			currentPos.x = Input.GetAxis("HorizontalMac")*radiusMult;
 			currentPos.y = Input.GetAxis("VerticalMac")*radiusMult;
+
+				//print (currentPos.x);
+				//print (Input.GetAxis("HorizontalMac"));
 
 			transform.localPosition = currentPos;
 
@@ -232,14 +280,14 @@ public class NewChompS : MonoBehaviour {
 	public void ChompAttack () {
 
 
-		if (enemyDetector.enemyToChomp != null){
+		/*if (enemyDetector.enemyToChomp != null){
 			chompTarget = enemyDetector.enemyToChomp;
 		}
 		else{
 		
 			chompTarget = null;
 
-		}
+		}*/
 
 		//count down charge delay
 		if (chargeDelay > 0){
@@ -258,22 +306,43 @@ public class NewChompS : MonoBehaviour {
 			timeHeld = 0;
 		}
 
+		float distanceToHowie = Vector3.Distance(transform.position, new Vector3(
+			howie.transform.position.x,howie.transform.position.y,transform.position.z));
 
-		if (chompTarget != enemyDetector.enemyBeingHeld){
-			if (attackTime < attackTimeMax){
-	
+		//if (chompTarget != enemyDetector.enemyBeingHeld){
+			//if (attackTime < attackTimeMax){
+		if (distanceToHowie < maxDist && attacking){
 				if (attackTime == 0){
 					// launch chompy head at enemy
 					// this is the code that actually triggers the attack and makes the bite move
-					if (chompTarget != null && (!yarla.holding || (yarla.holding && charging))){
-	
-	
-	
-					Vector3	attackPos = chompTarget.transform.position;
+
+
+		
+					Vector3	attackPos = yarla.transform.localPosition;
+
+				if (attackPos.x == 0){
+					attackPos.x = Random.Range(0.1f,1);
+				}
+				if (attackPos.y == 0){
+					attackPos.y = Random.Range(0.1f,1);
+				}
+
+
+					if (yarla.holding){
+						attackPos = yarla.holdTarget.transform.localPosition;
+
+						if (capturedTimeHeld > timeToTriggerChomp){
+						AbsorbEnemy(yarla.holdTarget.GetComponent<EnemyS>());
+						attacking = false;
+						attackTime = 0;
+						ResetChomp();
+						}
+					}
+
 					attackPos.z = transform.position.z;
 					
 					
-					rigidbody.velocity = (attackPos - transform.position).normalized*chompVel*Time.deltaTime;
+					rigidbody.velocity = attackPos.normalized*chompVel*Time.deltaTime;
 	
 	
 						// give Howie a bit of momentum in dir of bite too
@@ -283,7 +352,7 @@ public class NewChompS : MonoBehaviour {
 							// set charge delay to prevent double attacks
 						chargeDelay = chargeDelayMax;
 	
-					}
+
 				}
 	
 				attackTime += Time.deltaTime;
@@ -298,8 +367,8 @@ public class NewChompS : MonoBehaviour {
 				// turn off collider when not attacking
 				collider.enabled = false;
 			}
-		}
-		else{
+		//}
+		/*else{
 			//print ("Enemy being held");
 			if (attackTime < attackTimeHoldMax){
 				
@@ -344,7 +413,7 @@ public class NewChompS : MonoBehaviour {
 			else{
 				attacking = false;
 			}
-		}
+		}*/
 
 		/*// change color when at sweetSpot
 		if (timeHeld >= timeToTriggerChomp-0.1f && timeHeld <= timeToTriggerChomp+0.1f){
@@ -375,7 +444,7 @@ public class NewChompS : MonoBehaviour {
 				//perform initial attack 
 				if (!attacking && !yarla.holding){
 
-						if (!charging && chompTarget != null){
+						if (!charging){
 
 						attackTime = 0;
 						attacking = true;
@@ -402,7 +471,7 @@ public class NewChompS : MonoBehaviour {
 					if (timeHeld > 0){
 
 						// only attack if there's a target and chompDelay is over
-						if (chompTarget != null){
+						//if (chompTarget != null){
 
 							
 							attackTime = 0;
@@ -410,7 +479,7 @@ public class NewChompS : MonoBehaviour {
 
 
 
-						}
+						//}
 
 					}
 					
@@ -444,7 +513,7 @@ public class NewChompS : MonoBehaviour {
 				//perform initial attack 
 				if (!attacking && !yarla.holding){
 					
-					if (!charging && chompTarget != null){
+					if (!charging){
 						
 						attackTime = 0;
 						attacking = true;
@@ -471,7 +540,7 @@ public class NewChompS : MonoBehaviour {
 					if (timeHeld > 0){
 						
 						// only attack if there's a target and chompDelay is over
-						if (chompTarget != null){
+					//	if (chompTarget != null){
 							
 							
 							attackTime = 0;
@@ -479,7 +548,7 @@ public class NewChompS : MonoBehaviour {
 							
 							
 
-						}
+						//}
 						
 					}
 					
@@ -503,6 +572,10 @@ public class NewChompS : MonoBehaviour {
 
 		Vector3 enemyHitBack = rigidbody.velocity.normalized*hitBackMult;
 
+		
+		chompAudioSource.pitch = 1 + Random.insideUnitCircle.x*soundPitchVar;
+		chompAudioSource.PlayOneShot(chompSound);
+
 		// determine damage to deal based on charge time
 
 		// if timeHeld is greater than zero, this is not the initial attack
@@ -510,7 +583,7 @@ public class NewChompS : MonoBehaviour {
 
 			if (timeHeld <= timeToTriggerChomp){
 
-				attackTarget.EnemyKnockback(enemyHitBack, 0.1f, biteDamage);
+				AbsorbEnemy(attackTarget);
 
 			}
 			else{
@@ -539,6 +612,11 @@ public class NewChompS : MonoBehaviour {
 
 	void AbsorbEnemy(EnemyS attackTarget){
 
+		chompAudioSource.pitch = 1 + Random.insideUnitCircle.x*soundPitchVar;
+
+		chompAudioSource.PlayOneShot(absorbSound);
+		chompAudioSource.PlayOneShot(chompSound);
+
 		attackTarget.enemyHealth = 0;
 		attackTarget.renderer.enabled = false;
 
@@ -553,7 +631,7 @@ public class NewChompS : MonoBehaviour {
 	
 	void ResetChomp () {
 		
-		chompTarget = null;
+		//chompTarget = null;
 		chompButtonHeld = false;
 		charging = false;
 		timeHeld = 0;

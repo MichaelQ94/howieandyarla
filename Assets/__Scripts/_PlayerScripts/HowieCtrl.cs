@@ -6,6 +6,8 @@ public class HowieCtrl
 	
 	public YarlaS	yarla;
 	public HowieS	howie;
+	
+	public string platformType;
 
 	public HowieCtrl ()
 	{
@@ -16,6 +18,8 @@ public class HowieCtrl
 
 		howie = howiee;
 		yarla = howie.yarla;
+		
+		platformType = Events.Environment.getPlatform();
 		//Gain access to Howie and acquire Howie's attributes
 		//(So we don't have to keep going into Howie to get them)
 		//keep
@@ -167,7 +171,7 @@ public class HowieCtrl
 		
 		// for simplicity's sake, currently you can NOT switch while holding an enemy
 		
-		if (!yarla.yarlaCtrl.holding){
+		if (!yarla.holding){
 			
 			// check for platform and switch at button press (A on controller, shift on key)
 			
@@ -178,46 +182,76 @@ public class HowieCtrl
 			
 			// if using controller
 			if (inputNumber > 0){
-				if (Application.platform == RuntimePlatform.OSXEditor || 
-				    Application.platform == RuntimePlatform.OSXPlayer ||
-				    Application.platform == RuntimePlatform.OSXWebPlayer || 
-				    Application.platform == RuntimePlatform.OSXDashboardPlayer){
-					if (Input.GetButtonDown("SwitchCharMac")){
-						howie.isHowieSolo=!howie.isHowieSolo;
-						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+				if (Input.GetButton("SwitchChar" + platformType)){
+					if (!howie.isHowieSolo){
+						//howie.isHowieSolo=true;
+						if (Input.GetButtonDown("SwitchChar" + platformType)){
+							howie.isTransforming = true;
+							howie.howieToYarlaCurrentFrame = 0;
+							howie.howieToYarlaFrameRate = howie.howieToYarlaFrameRateMax;
+						}
+						//GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
 						//deactivates/activates chomping ability based on whether howie is solo
-						chompers.renderer.enabled = !howie.isHowieSolo;
+						//chompers.renderer.enabled = false;
 						// always reset current frame to ensure no errors
 						howie.currentWalkSprite = 0;
 					}
-					
 				}
-				if (Application.platform == RuntimePlatform.WindowsEditor || 
-				    Application.platform == RuntimePlatform.WindowsPlayer ||
-				    Application.platform == RuntimePlatform.WindowsWebPlayer){
-					if (Input.GetButtonDown("SwitchCharPC")){
-						howie.isHowieSolo=!howie.isHowieSolo;
-						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+				else{
+					if (howie.isHowieSolo && !howie.isTransforming){
+						//howie.isHowieSolo = false;
+							howie.isTransforming = true;
+							howie.howieToYarlaCurrentFrame = howie.howieToYarlaFrames.Count-1;
+							howie.howieToYarlaFrameRate = howie.howieToYarlaFrameRateMax;
+
+						//GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
 						//deactivates/activates chomping ability based on whether howie is solo
-						chompers.renderer.enabled = !howie.isHowieSolo;
+						//chompers.renderer.enabled = true;
 						// always reset current frame to ensure no errors
 						howie.currentWalkSprite = 0;
 					}
-					
+				}
+
+				
+				if (Input.GetButtonUp("SwitchChar" + platformType)){
+					howie.isTransforming = false;
 				}
 			}
 			// if not using controller
 			else{
-				if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)){
-					if (howie.isHowieSolo){
-						howie.isHowieSolo = false;
-					}
-					else{
-						howie.isHowieSolo = true;
+				if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)){
+					
+					if (!howie.isHowieSolo){
+						//howie.isHowieSolo=true;
+						if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)){
+							howie.isTransforming = true;
+							howie.howieToYarlaCurrentFrame = 0;
+							howie.howieToYarlaFrameRate = howie.howieToYarlaFrameRateMax;
+						}
+						//GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+						//deactivates/activates chomping ability based on whether howie is solo
+						//chompers.renderer.enabled = false;
+						howie.currentWalkSprite = 0;
 					}
 					
-					// always reset current frame to ensure no errors
-					howie.currentWalkSprite = 0;
+				}
+				else{
+					if (howie.isHowieSolo && !howie.isTransforming){
+						//howie.isHowieSolo = false;
+						howie.isTransforming = true;
+						howie.howieToYarlaCurrentFrame = howie.howieToYarlaFrames.Count-1;
+						howie.howieToYarlaFrameRate = howie.howieToYarlaFrameRateMax;
+
+						//GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
+						//deactivates/activates chomping ability based on whether howie is solo
+						//chompers.renderer.enabled = true;
+						howie.currentWalkSprite = 0;
+					}
+				}
+
+				
+				if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift)){
+					howie.isTransforming = false;
 				}
 			}
 		}

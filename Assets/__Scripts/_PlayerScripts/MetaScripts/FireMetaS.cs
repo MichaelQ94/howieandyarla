@@ -5,6 +5,7 @@ public class FireMetaS : MetaGeneralS {
 
 	public GameObject	firePrefab;
 	public GameObject	fireBallPrefab;
+	public GameObject	explosionPrefab;
 	public GameObject	smokeShotPrefab;
 
 	public float 		fireBallSpeed;
@@ -324,6 +325,8 @@ public class FireMetaS : MetaGeneralS {
 			Instantiate(firePrefab,spawnFirePos,Quaternion.identity);
 
 		}
+
+		Instantiate(explosionPrefab,transform.position,Quaternion.identity);
 
 		spawnedInitialFire = true;
 

@@ -5,6 +5,8 @@ namespace Events {
 public class Environment : MonoBehaviour {
 	public const string PLAYER = "Player";
 
+		public static string reloadScene;
+
 	public static bool isComputer() {
 		return isMac () || isWindows ();
 	}
