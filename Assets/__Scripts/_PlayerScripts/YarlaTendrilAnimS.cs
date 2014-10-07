@@ -23,19 +23,35 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 	void Start () {
 
 		originalZ = transform.localPosition.z;
-		if (targetHead.GetComponent<YarlaS>() != null){
+
+		attachedHowie = GameObject.Find("HowieSprite");
+		/*if (targetHead.GetComponent<YarlaS>() != null){
 			attachedYarlaS = targetHead.GetComponent<YarlaS>();
+			//attachedHowie = attachedYarlaS.howie.gameObject;
 		}
 		if (targetHead.GetComponent<NewChompS>() != null){
 			attachedChompS = targetHead.GetComponent<NewChompS>();
-		}
+		}*/
+
+
 	
 	}
 
 	void FixedUpdate () {
 
+		/*if (attachedHowie == null){
+			if (attachedChompS != null){
+				attachedHowie = attachedChompS.howie.gameObject;
+			}
+			if (attachedYarlaS != null){
+				attachedHowie = attachedYarlaS.howie.gameObject;
+			}
+		}*/
+
 		FaceHead();
 		TendrilWiggle();
+
+
 
 	
 	}
