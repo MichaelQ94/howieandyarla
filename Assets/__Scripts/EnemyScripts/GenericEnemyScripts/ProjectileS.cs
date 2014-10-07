@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ProjectileS : MonoBehaviour {
 
@@ -20,9 +21,18 @@ public class ProjectileS : MonoBehaviour {
 
 	public bool smokeShot = false;
 
+	public bool 	doMuzzleFlare = true;
 	public bool muzzleFlashOver = false;
 	public float begSizeMult = 2;
 	public float muzzleFlashTime = 0.2f;
+
+	public bool animate = false;
+	public bool lookAtTarget = false;
+	public int currentFrame = 0;
+	public float frameRateMax = 0.024f;
+	public float frameRate;
+
+	public List<Texture> frames;
 
 	public GameObject	explosion;
 
@@ -30,17 +40,28 @@ public class ProjectileS : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		transform.localScale*= begSizeMult;
+		if (doMuzzleFlare){
+			transform.localScale*= begSizeMult;
+		}
+		frameRate = frameRateMax;
+
+		if (lookAtTarget){
+			FindAngle();
+		}
+
+
 	
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 
+		if (doMuzzleFlare){
 		muzzleFlashTime -= Time.deltaTime;
 		if (muzzleFlashTime <= 0 && !muzzleFlashOver){
 			transform.localScale/=begSizeMult;
 			muzzleFlashOver = true;
+		}
 		}
 
 		//transform.LookAt(HowieS.H.transform.position);
@@ -52,7 +73,40 @@ public class ProjectileS : MonoBehaviour {
 		if (lifeSpan <= 0){
 			Destroy(gameObject);
 		}
+
+		if (animate && muzzleFlashOver){
+			Animate();
+		}
 	
+	}
+
+	public void Animate(){
+
+		frameRate -= Time.deltaTime;
+		if (frameRate <= 0){
+			currentFrame++;
+			if (currentFrame > frames.Count-1){
+				currentFrame =0;
+			}
+		}
+		renderer.material.SetTexture("_MainTex",frames[currentFrame]);
+
+	}
+
+	void FindAngle(){
+
+
+
+		float rotateZ = Mathf.Rad2Deg*Mathf.Atan((rigidbody.velocity.y/rigidbody.velocity.x));
+
+		//print (rotateZ);
+
+		if (rigidbody.velocity.x < 0){
+			rotateZ += 180;
+		}
+
+		transform.Rotate(new Vector3(0,0,rotateZ));
+
 	}
 
 	public void ReturnToSender () {

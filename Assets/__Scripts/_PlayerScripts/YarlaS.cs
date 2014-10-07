@@ -44,6 +44,10 @@ public class YarlaS : MonoBehaviour {
 	public float 		launchAnimRateMax = 0.1f;
 	public int 			currentLaunchFrame = 0;
 
+	//public float 		restXPos = 3;
+	//public float 		restYPos = 3;
+	//public float 		resetPosSpeed = 1;
+
 	public List<Texture>	launchAnimFrames;
 
 	public HowieS howie;
@@ -68,11 +72,13 @@ public class YarlaS : MonoBehaviour {
 
 	void FixedUpdate () {
 		// turn throw and grab off when just solo howie
-		if (!howie.isHowieSolo && !howie.metaActive){
+		if (!howie.isHowieSolo && !howie.metaActive && !howie.isTransforming){
 
 			HoldEnemy ();
 			renderer.enabled = true;
 			collider.enabled = true;
+
+			//DriftBack();
 
 			LookMean();
 
@@ -123,7 +129,7 @@ public class YarlaS : MonoBehaviour {
 				
 			}
 				if (!other.gameObject.GetComponent<EnemyS>().vulnerable && launched){
-					other.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity*2,0.4f,0);
+					other.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity*2,0.2f,0);
 					ReturnToHowie();
 				}
 		}
@@ -134,7 +140,7 @@ public class YarlaS : MonoBehaviour {
 		if (other.gameObject.tag == "Wall" && launched){
 			//	print("ehhh");
 			ReturnToHowie();	
-	}
+		}
 
 	}
 
@@ -142,9 +148,37 @@ public class YarlaS : MonoBehaviour {
 
 		if (other.gameObject == holdTarget && !holding){
 			holdTarget = null;
-	}
+		}
 
 	}
+
+	/*void DriftBack () {
+
+		// if player is not aiming, have head move back to position
+		if (Input.GetAxis("SecondHorizontal" + platformType) == 0 &&
+		    Input.GetAxis("SecondVertical" + platformType) == 0){
+
+			Vector3 currentPos = transform.localPosition;
+
+			if (currentPos.x < restXPos){
+				currentPos.x -= resetPosSpeed*Time.deltaTime;
+			}
+			else{
+				currentPos.x += resetPosSpeed*Time.deltaTime;
+			}
+
+			if (currentPos.y < restYPos){
+				currentPos.y -= resetPosSpeed*Time.deltaTime;
+			}
+			else{
+				currentPos.y += resetPosSpeed*Time.deltaTime;
+			}
+
+			transform.localPosition = currentPos;
+
+		}
+
+	}*/
 
 	void ResetPosition () {
 

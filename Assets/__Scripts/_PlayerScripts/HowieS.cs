@@ -34,6 +34,12 @@ public class HowieS : MonoBehaviour {
 	public List<Texture>	howieWalkCycle; // walking frames
 	public List<Texture>	howieSoloWalkCycle; // just howie walking frames
 
+	public List<Texture>	howieToYarlaFrames;
+	public int 				howieToYarlaCurrentFrame;
+	public float 			howieToYarlaFrameRate;
+	public float 			howieToYarlaFrameRateMax = 0.012f;
+	public bool				isTransforming = false;
+
 	public GameObject	yarlaShadow;
 	public GameObject	howieShadow;
 	
@@ -73,6 +79,12 @@ public class HowieS : MonoBehaviour {
 	public YarlaS	yarla;
 	public string platformType;
 	public HowieCtrl	howieCtrl;
+
+	// for moving yarla back on rest
+	//public float 		restXPos = 3;
+	//public float 		restYPos = 3;
+	//public float 		resetPosSpeed = 1;
+
 	// Use this for initialization
 	void Start () {
 
@@ -104,6 +116,7 @@ public class HowieS : MonoBehaviour {
 		
 		//IdleAnim ();
 		Walk ();
+
 		MoveHand ();
 		Animate();
 		UpdateHealth();
@@ -195,62 +208,96 @@ public class HowieS : MonoBehaviour {
 		else{
 			attachedSprite.renderer.material.SetTextureScale("_MainTex",new Vector2(-1,1));
 		}
-		
-		
-		if (Mathf.Abs(rigidbody.velocity.x) > 0
-		    || Mathf.Abs(rigidbody.velocity.y) > 0 || isHowieSolo){
-			
-			walkCycleRateCountdown -= Time.deltaTime;
-			
-			if (walkCycleRateCountdown <= 0){
-				currentWalkSprite++;
-				if (!isHowieSolo){
-					if (metaActive){
-						// change this meta-based texture swapping ASAP!
-						if (currentWalkSprite > fireHowieAndYarlaTexts.Count-1){
-							currentWalkSprite = 0;
+
+		// animate tendril deploy/retract
+		if (isTransforming){
+
+			yarlaShadow.renderer.enabled = false;
+			howieShadow.renderer.enabled = true;
+			attachedSprite.transform.localScale = new Vector3(1,1,1);
+
+			howieToYarlaFrameRate -= Time.deltaTime;
+
+			if (howieToYarlaFrameRate <= 0){
+					
+				if (isHowieSolo){
+					howieToYarlaCurrentFrame --;
+					if (howieToYarlaCurrentFrame <= 0){
+						isTransforming = false;
+						isHowieSolo = !isHowieSolo;
+					}
+				}
+				else{
+					howieToYarlaCurrentFrame ++;
+					if (howieToYarlaCurrentFrame >= howieToYarlaFrames.Count-1){
+						isTransforming = false;
+						isHowieSolo = !isHowieSolo;
+					}
+				}
+				howieToYarlaFrameRate = howieToYarlaFrameRateMax;
+			}
+			//print ("WOO");
+			//print (howieToYarlaCurrentFrame);
+			attachedSprite.renderer.material.SetTexture("_MainTex", howieToYarlaFrames[howieToYarlaCurrentFrame]);
+
+
+		}
+		else{
+			if (Mathf.Abs(rigidbody.velocity.x) > 0
+			    || Mathf.Abs(rigidbody.velocity.y) > 0 || isHowieSolo){
+				
+				walkCycleRateCountdown -= Time.deltaTime;
+				
+				if (walkCycleRateCountdown <= 0){
+					currentWalkSprite++;
+					if (!isHowieSolo){
+						if (metaActive){
+							// change this meta-based texture swapping ASAP!
+							if (currentWalkSprite > fireHowieAndYarlaTexts.Count-1){
+								currentWalkSprite = 0;
+							}
+						}
+						else{
+							if (currentWalkSprite > howieWalkCycle.Count-1){
+								currentWalkSprite = 0;
+							}
 						}
 					}
 					else{
-						if (currentWalkSprite > howieWalkCycle.Count-1){
+						if (currentWalkSprite > howieSoloWalkCycle.Count-1){
 							currentWalkSprite = 0;
 						}
 					}
-				}
-				else{
-					if (currentWalkSprite > howieSoloWalkCycle.Count-1){
-						currentWalkSprite = 0;
+					if (!isHowieSolo){
+						walkCycleRateCountdown = walkCycleRate;
+					}
+					else{
+						walkCycleRateCountdown = walkCycleHowieSoloRate;
 					}
 				}
-				if (!isHowieSolo){
-					walkCycleRateCountdown = walkCycleRate;
-				}
-				else{
-					walkCycleRateCountdown = walkCycleHowieSoloRate;
-				}
-			}
-		}
-		else{
-			currentWalkSprite = 0;
-		}
-		
-		if (!isHowieSolo){
-			// change this whole meta-based texture swapping ASAP!!
-			if (metaActive){
-				attachedSprite.renderer.material.SetTexture("_MainTex",fireHowieAndYarlaTexts[currentWalkSprite]);
 			}
 			else{
-				attachedSprite.renderer.material.SetTexture("_MainTex",howieWalkCycle[currentWalkSprite]);
+				currentWalkSprite = 0;
 			}
-			attachedSprite.transform.localScale = new Vector3(1,1,1);
-			yarlaShadow.renderer.enabled = true;
-			howieShadow.renderer.enabled = false;
-		}
-		else{
-			attachedSprite.renderer.material.SetTexture("_MainTex",howieSoloWalkCycle[currentWalkSprite]);
-			attachedSprite.transform.localScale = new Vector3(0.75f,0.75f,1);
-			yarlaShadow.renderer.enabled = false;
-			howieShadow.renderer.enabled = true;
+		
+			if (!isHowieSolo){
+				// change this whole meta-based texture swapping ASAP!!
+				if (metaActive){
+					attachedSprite.renderer.material.SetTexture("_MainTex",fireHowieAndYarlaTexts[currentWalkSprite]);
+				}
+				else{
+					attachedSprite.renderer.material.SetTexture("_MainTex",howieWalkCycle[currentWalkSprite]);
+				}
+				attachedSprite.transform.localScale = new Vector3(1,1,1);
+				yarlaShadow.renderer.enabled = true;
+				howieShadow.renderer.enabled = false;
+			}
+			else{
+				attachedSprite.renderer.material.SetTexture("_MainTex",howieSoloWalkCycle[currentWalkSprite]);
+				attachedSprite.transform.localScale = new Vector3(0.75f,0.75f,1);
+				yarlaShadow.renderer.enabled = false;
+				howieShadow.renderer.enabled = true;
+			}
 		}
 		
 	}
@@ -281,8 +328,13 @@ public class HowieS : MonoBehaviour {
 				charVel *= howieSoloSpeedMult;
 			}
 			
-			// set speed back into rigidbody
-			rigidbody.velocity = charVel;
+			// set speed back into rigidbody if not transforming
+			if (isTransforming){
+				rigidbody.velocity = Vector3.zero;
+			}
+			else{
+				rigidbody.velocity = charVel;
+			}
 		}
 		
 	}
@@ -430,60 +482,7 @@ public class HowieS : MonoBehaviour {
 	
 	public void CheckHowieSwitch () {
 		
-		// switch between Howie solo and H&Y at button press
-		
-		// for simplicity's sake, currently you can NOT switch while holding an enemy
-		
-		if (!yarla.holding){
-			
-			// check for platform and switch at button press (A on controller, shift on key)
-			
-			// check if using controller
-			string[] checkInputs = Input.GetJoystickNames();
-			
-			int inputNumber = checkInputs.Length;
-			
-			// if using controller
-			if (inputNumber > 0){
-					if (Input.GetButton("SwitchChar" + platformType)){
-					if (!isHowieSolo){
-						isHowieSolo=true;
-						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
-						//deactivates/activates chomping ability based on whether howie is solo
-						chompers.renderer.enabled = false;
-						// always reset current frame to ensure no errors
-						currentWalkSprite = 0;
-					}
-				}
-				else{
-					if (isHowieSolo){
-						isHowieSolo = false;
-						GameObject chompers = GameObject.FindGameObjectsWithTag("Yarla")[0];
-						//deactivates/activates chomping ability based on whether howie is solo
-						chompers.renderer.enabled = true;
-						// always reset current frame to ensure no errors
-						currentWalkSprite = 0;
-					}
-				}
-			}
-			// if not using controller
-			else{
-				if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)){
-
-					if (!isHowieSolo){
-						isHowieSolo = true;
-						currentWalkSprite = 0;
-					}
-
-				}
-					else{
-						if (isHowieSolo){
-							isHowieSolo = false;
-							currentWalkSprite = 0;
-						}
-					}
-			}
-		}
+		howieCtrl.CheckHowieSwitch();
 		
 	}
 
@@ -560,7 +559,8 @@ public class HowieS : MonoBehaviour {
 	}
 	
 	public void GameOver (){
-		
+
+		Events.Environment.reloadScene = Application.loadedLevelName;
 		// loads game over screen when called
 		Application.LoadLevel(gameOverScene);
 		

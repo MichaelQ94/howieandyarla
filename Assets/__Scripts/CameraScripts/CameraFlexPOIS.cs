@@ -20,7 +20,7 @@ public class CameraFlexPOIS : MonoBehaviour {
 			transform.position = howie.GetComponent<HowieS>().transform.position;
 		}
 		else{
-			transform.position = (chompHead.transform.position + yarla.transform.position)/2;
+			transform.position = (howie.transform.position + yarla.transform.position*3 + chompHead.gameObject.transform.position)/5;
 		}
 	
 	}

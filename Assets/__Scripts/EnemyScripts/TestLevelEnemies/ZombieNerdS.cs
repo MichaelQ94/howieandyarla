@@ -305,12 +305,11 @@ public class ZombieNerdS: EnemyS {
 			Vector3	target1 = level.howie.GetComponent<HowieS>().transform.position;
 			target1.x -= Random.Range(0.5f,1)*accuracyMult;
 			target1.y -= Random.Range(0.5f,1)*accuracyMult;
-			
-			fireBall1.transform.LookAt(target1); // fireball aims at howie
+
 			
 			// shoots out! (add vel)
-			fireBall1.rigidbody.AddForce(fireBall1.transform.forward*
-			                             fireBallSpeed*Time.deltaTime);
+			fireBall1.rigidbody.velocity = (target1-transform.position).normalized*
+			                             fireBallSpeed*Time.deltaTime;
 			
 
 			fireBallTime = Random.Range(fireBallTimeMin, fireBallTimeMax);
