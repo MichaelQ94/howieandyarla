@@ -63,6 +63,8 @@ public class NewChompS : MonoBehaviour {
 	public AudioSource	chompAudioSource;
 	public AudioClip	chompSound;
 	public AudioClip	absorbSound;
+	public AudioClip	extendSound;
+	public AudioClip	retractSound;
 	public float 		soundPitchVar = 0.1f;
 
 	
@@ -449,6 +451,10 @@ public class NewChompS : MonoBehaviour {
 						attackTime = 0;
 						attacking = true;
 
+						chompAudioSource.pitch = 1 + Random.insideUnitCircle.x*soundPitchVar;
+						
+						chompAudioSource.PlayOneShot(extendSound);
+
 						}
 					}
 						else{
@@ -632,6 +638,10 @@ public class NewChompS : MonoBehaviour {
 	void ResetChomp () {
 		
 		//chompTarget = null;
+		chompAudioSource.pitch = 1 + Random.insideUnitCircle.x*soundPitchVar;
+		
+		chompAudioSource.PlayOneShot(retractSound);
+
 		chompButtonHeld = false;
 		charging = false;
 		timeHeld = 0;

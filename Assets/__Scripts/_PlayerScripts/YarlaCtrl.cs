@@ -64,6 +64,11 @@ public class YarlaCtrl
 						(yarla.launchSpeed*yarla.howie.handPos.x,
 						 yarla.launchSpeed*yarla.howie.handPos.y,0)*Time.deltaTime/yarla.howie.maxHandRadius;
 				}
+
+			//play extend sound
+			yarla.yarlaAudioSource.pitch = 1 + yarla.soundPitchVar*UnityEngine.Random.insideUnitCircle.x;
+			yarla.yarlaAudioSource.PlayOneShot(yarla.extendSound);
+
 				yarla.launchAxisDown = true;
 				yarla.launched = true;
 				//print ("Shoot!");
@@ -155,6 +160,9 @@ public class YarlaCtrl
 					yarla.launchAxisDown = false;
 					yarla.holding = false;
 					yarla.holdTime = 0;
+
+				yarla.yarlaAudioSource.pitch = 1 + yarla.soundPitchVar*UnityEngine.Random.insideUnitCircle.x;
+				yarla.yarlaAudioSource.PlayOneShot(yarla.throwSound);
 				}
 			
 		}

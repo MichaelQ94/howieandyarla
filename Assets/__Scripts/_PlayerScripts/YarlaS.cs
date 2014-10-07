@@ -48,6 +48,13 @@ public class YarlaS : MonoBehaviour {
 	//public float 		restYPos = 3;
 	//public float 		resetPosSpeed = 1;
 
+	public AudioSource	yarlaAudioSource;
+	public AudioClip	grabSound;
+	public AudioClip	throwSound;
+	public AudioClip	extendSound;
+	public AudioClip	retractSound;
+	public float 		soundPitchVar = 0.1f;
+
 	public List<Texture>	launchAnimFrames;
 
 	public HowieS howie;
@@ -67,6 +74,8 @@ public class YarlaS : MonoBehaviour {
 		yarlaCtrl = new YarlaCtrl (this, platformType);
 
 		launchAnimRateMax = launchMaxTime/launchAnimFrames.Count;
+
+		yarlaAudioSource = GetComponent<AudioSource>();
 
 	}
 
@@ -487,6 +496,9 @@ public class YarlaS : MonoBehaviour {
 		transform.position = resetPos;
 		launchMaxCooldown = launchMaxTime;
 		launched = false;
+
+		yarlaAudioSource.pitch = 1 + soundPitchVar*Random.insideUnitCircle.x;
+		yarlaAudioSource.PlayOneShot(retractSound);
 
 	}
 
