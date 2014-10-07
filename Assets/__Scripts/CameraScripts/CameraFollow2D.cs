@@ -23,6 +23,9 @@ public class CameraFollow2D : MonoBehaviour {
 
 		orthoOriginSize = camera.orthographicSize;
 		orthoMinSize = orthoOriginSize*minMaxMult;
+		poi = GameObject.Find ("AdaptiveCameraPoint");
+		attachedChomp = GameObject.Find ("Chompy").GetComponent<NewChompS>();
+		attachedYarla = GameObject.Find ("Yarla").GetComponent<YarlaS>();
 
 	}
 	
