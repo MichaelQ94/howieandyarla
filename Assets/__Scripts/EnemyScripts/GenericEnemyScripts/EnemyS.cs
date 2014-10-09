@@ -67,6 +67,8 @@ public class EnemyS : MonoBehaviour {
 	public float fireDamageToTake = 5;
 	public GameObject	firePrefab;
 
+	public GameObject	hitPrefab;
+
 	public float 	recycleTime = 10;
 
 	public NewChompS	chompy;

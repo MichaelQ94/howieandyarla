@@ -44,7 +44,10 @@ public class ZombieNerdS: EnemyS {
 	public bool stunned = false;
 	
 	public Texture	defaultTexture;
-	
+
+	public bool 	shootingFireball = false;
+	public int 		frameToShootFireball = 7;
+
 	// fireball to spawn
 	public GameObject	fireBall;
 	public float 		accuracyMult = 0.5f; // changes aim slightly and randomly
@@ -60,6 +63,21 @@ public class ZombieNerdS: EnemyS {
 	public int currentWalkTexture = 0; // frame to display
 	public float walkFrameRate = 0.042f; // duration per individual frame
 	public float walkFrameRateCountdown = 0;
+
+	public List<Texture>	attackTextures;
+	public int currentAttackTextures = 0; 
+	public float attackFrameRateMax = 0.042f; 
+	public float attackFrameRate = 0;
+
+	public List<Texture>	deadTextures;
+	public int currentDeadTexture = 0; 
+	public float deadFrameRateMax = 0.042f; 
+	public float deadFrameRate = 0;
+
+	public List<Texture>	vulnTextures;
+	public int currentVulnTexture = 0; 
+	public float vulnFrameRateMax = 0.042f; 
+	public float vulnFrameRate = 0;
 	
 	// Use this for initialization
 	void Start () {
@@ -82,36 +100,60 @@ public class ZombieNerdS: EnemyS {
 			StopMovement();
 		}
 
-		SpriteManager();
-		
-		/*if (!isDead){
-			if (vulnerable){
-				sprite.renderer.material.SetTexture("_MainTex",vulnerableTexture);
-			}
-			else if (hitStunned){
-				sprite.renderer.material.SetTexture("_MainTex",hitStunTexture);
-			}
-			else{
-				if (sprite.renderer.material.mainTexture != defaultTexture){
-					sprite.renderer.material.SetTexture("_MainTex",defaultTexture);
-				}
-			}
-		}*/
-		
-		
+
+		// allow for attack anim when shooting fireball
+		if (!shootingFireball){
+			SpriteManager();
+		}
+
+		// find a more elegant way to do this
+		if (isDead){
+			shootingFireball = false;
+		}
 		
 	}
 
 	void SpriteManager () {
 
 		if (isDead){
-			sprite.renderer.material.SetTexture("_MainTex",deadTexture);
+			// animate death state
+			if (currentDeadTexture < deadTextures.Count-1){
+				deadFrameRate -= Time.deltaTime;
+			}
+			if (deadFrameRate <= 0){
+				currentDeadTexture++;
+				deadFrameRate = deadFrameRateMax;
+			}
+			renderer.material.SetTexture("_MainTex",deadTextures[currentDeadTexture]);
 		}
 		else if (hitStunned){
-			sprite.renderer.material.SetTexture("_MainTex",hitStunTexture);
+			if (vulnerable){
+				sprite.renderer.material.SetTexture("_MainTex",hitStunTexture);
+			}
+			else{
+				if (attackFrameRate > 0){
+					attackFrameRate -= Time.deltaTime;
+				}
+				else{
+					attackFrameRate = attackFrameRateMax;
+					currentAttackTextures++;
+					if (currentAttackTextures > attackTextures.Count-1){
+						currentAttackTextures = 0;
+					}
+				}
+				renderer.material.SetTexture("_MainTex", attackTextures[currentAttackTextures]);
+			}
 		}
 		else if (vulnerable){
-			sprite.renderer.material.SetTexture("_MainTex",vulnerableTexture);
+			// animate vulnerable state
+			if (currentVulnTexture < vulnTextures.Count-1){
+				vulnFrameRate -= Time.deltaTime;
+			}
+			if (vulnFrameRate <= 0){
+				currentVulnTexture++;
+				vulnFrameRate = vulnFrameRateMax;
+			}
+			renderer.material.SetTexture("_MainTex",vulnTextures[currentVulnTexture]);
 		}
 		else{
 			if (walkFrameRateCountdown > 0){
@@ -185,7 +227,12 @@ public class ZombieNerdS: EnemyS {
 				
 				ChangeVelocity(); // randomize movement
 
-				rigidbody.velocity = moveVel*Time.deltaTime;
+				if (!shootingFireball){
+					rigidbody.velocity = moveVel*Time.deltaTime;
+				}
+				else{
+					rigidbody.velocity = Vector3.zero;
+				}
 				
 				if (moveTime > 0){
 					
@@ -281,38 +328,57 @@ public class ZombieNerdS: EnemyS {
 		
 		// count down to next shoot time
 		if (fireBallTime > 0){
-			
+
+			attackFrameRate = attackFrameRateMax;
+			currentAttackTextures = 0;
+			shootingFireball = false;
 			fireBallTime -= Time.deltaTime;
 			
 		}
 		
 		// once time is reached...
 		else{
-			
-			// have fireball spawn at gargoyle position and howie z position (to ensure hit)
-			Vector3 projectilePos = transform.position;
-			projectilePos.z = level.howie.GetComponent<HowieS>().transform.position.z;
-			
-			// instantiate that fireball
-			GameObject fireBall1 = 
-				Instantiate(fireBall, projectilePos, Quaternion.identity)
-					as GameObject;
-			fireBall1.tag = "Projectile";
-			
-			//offset look target to approx. less accuracy
-			// first projectile veers off in the negative direction
-			
-			Vector3	target1 = level.howie.GetComponent<HowieS>().transform.position;
-			target1.x -= Random.Range(0.5f,1)*accuracyMult;
-			target1.y -= Random.Range(0.5f,1)*accuracyMult;
 
-			
-			// shoots out! (add vel)
-			fireBall1.rigidbody.velocity = (target1-transform.position).normalized*
-			                             fireBallSpeed*Time.deltaTime;
-			
+			shootingFireball = true;
 
-			fireBallTime = Random.Range(fireBallTimeMin, fireBallTimeMax);
+			// animate, then halfway through spawn fireball
+			attackFrameRate -= Time.deltaTime;
+			if (attackFrameRate <= 0){
+				currentAttackTextures++;
+				if (currentAttackTextures >= attackTextures.Count-1){
+					shootingFireball = false;
+					
+					fireBallTime = Random.Range(fireBallTimeMin, fireBallTimeMax);
+				}
+			}
+
+			renderer.material.SetTexture("_MainTex",attackTextures[currentAttackTextures]);
+
+			if (currentAttackTextures == frameToShootFireball){
+	
+				// have fireball spawn at gargoyle position and howie z position (to ensure hit)
+				Vector3 projectilePos = transform.position;
+					projectilePos.z = level.howie.GetComponent<HowieS>().transform.position.z;
+				
+				// instantiate that fireball
+				GameObject fireBall1 = 
+					Instantiate(fireBall, projectilePos, Quaternion.identity)
+						as GameObject;
+				fireBall1.tag = "Projectile";
+				
+				//offset look target to approx. less accuracy
+				// first projectile veers off in the negative direction
+				
+				Vector3	target1 = level.howie.GetComponent<HowieS>().transform.position;
+				target1.x -= Random.Range(0.5f,1)*accuracyMult;
+				target1.y -= Random.Range(0.5f,1)*accuracyMult;
+	
+				
+				// shoots out! (add vel)
+				fireBall1.rigidbody.velocity = (target1-transform.position).normalized*
+				                             fireBallSpeed*Time.deltaTime;
+	
+			}
 			
 			
 		}

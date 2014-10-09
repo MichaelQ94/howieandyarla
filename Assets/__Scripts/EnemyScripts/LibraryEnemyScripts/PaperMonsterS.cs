@@ -49,6 +49,21 @@ public class PaperMonsterS : EnemyS {
 	public int currentIdleFrame;
 	public float idleFrameTime;
 	public float idleFrameTimeMax = 0.04f;
+
+	public List<Texture> vulnTextures;
+	public int currentVulnFrame;
+	public float vulnFrameTime;
+	public float vulnFrameTimeMax = 0.04f;
+
+	public List<Texture> hitTextures;
+	public int currentHitFrame;
+	public float hitFrameTime;
+	public float hitFrameTimeMax = 0.04f;
+
+	public List<Texture> deadTextures;
+	public int currentdeadFrame;
+	public float deadFrameTime;
+	public float deadFrameTimeMax = 0.04f;
 	
 	private bool facingRight = false;
 
@@ -161,15 +176,49 @@ public class PaperMonsterS : EnemyS {
 	void ManageSprite () {
 		
 		if (isDead){
-			renderer.material.SetTexture("_MainTex", deadTexture);
+			// animate death state
+			if (currentdeadFrame < deadTextures.Count-1){
+				deadFrameTime -= Time.deltaTime;
+			}
+			if (deadFrameTime <= 0){
+				currentdeadFrame++;
+				deadFrameTime = deadFrameTimeMax;
+			}
+			renderer.material.SetTexture("_MainTex",deadTextures[currentdeadFrame]);
 		}
 		else if (hitStunned){
-			renderer.material.SetTexture("_MainTex",hitStunTexture);
+			// "hit back" tendril
+			if (!vulnerable){
+				renderer.material.SetTexture("_MainTex",hitStunTexture);
+			}
+			else{
+				hitFrameTime -= Time.deltaTime;
+				if (hitFrameTime <= 0){
+					currentHitFrame++;
+					if (currentHitFrame >= hitTextures.Count-1){
+						currentHitFrame = 0;
+					}
+					hitFrameTime = hitFrameTimeMax;
+				}
+				renderer.material.SetTexture("_MainTex",hitTextures[currentHitFrame]);
+			}
 		}
 		else if (vulnerable){
-			renderer.material.SetTexture("_MainTex",vulnerableTexture);
+			// animate vulnerable state
+			if (currentVulnFrame < vulnTextures.Count-1){
+				vulnFrameTime -= Time.deltaTime;
+			}
+			if (vulnFrameTime <= 0){
+				currentVulnFrame++;
+				vulnFrameTime = vulnFrameTimeMax;
+			}
+			renderer.material.SetTexture("_MainTex",vulnTextures[currentVulnFrame]);
 		}
 		else{
+
+			currentVulnFrame = 0;
+			currentHitFrame = 0;
+
 			if (rigidbody.velocity.x > 0){
 				facingRight = true;
 			}
@@ -211,6 +260,9 @@ public class PaperMonsterS : EnemyS {
 			attackTimeCountdown -= Time.deltaTime;
 			if (attackTimeCountdown <= 0){
 			
+				
+				gameObject.layer = LayerMask.NameToLayer("IgnoreEnemies");
+
 				attacking = true;
 				currentAttackingTexture = 0;
 				attackDuration = attackDurationMax;
@@ -235,6 +287,8 @@ public class PaperMonsterS : EnemyS {
 				else{
 					attacking = false;
 					attackTimeCountdown = Random.Range(attackTimeCountdownMin, attackTimeCountdownMax);
+				
+				gameObject.layer = LayerMask.NameToLayer(LayerMask.LayerToName(originalPhysicsLayer));
 					//currentWalkingTextures = 0;
 					//changeWalkTargetCountdown = 0;
 				}

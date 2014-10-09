@@ -25,6 +25,7 @@ public class NewChompS : MonoBehaviour {
 
 	public float radiusMult = 0.25f;
 	public float maxDist = 3;
+	public float fireMaxDistMult = 0.25f;
 
 	public float chompVel = 4000;
 	public float hitBackMult = 3000;
@@ -67,6 +68,11 @@ public class NewChompS : MonoBehaviour {
 	public AudioClip	retractSound;
 	public float 		soundPitchVar = 0.1f;
 
+	public int 	currentFireMetaText;
+	public float 	fireMetaIdleAnimRate;
+	public float 	fireMetaIdleAnimRateMax = 0.04f;
+	public List<Texture>		fireMetaTextures;
+
 	
 	// Use this for initialization
 	void Start () {
@@ -95,7 +101,7 @@ public class NewChompS : MonoBehaviour {
 		// chomp should not work when we are just solo howie!
 		// turn this on and off appropriately
 		
-		if (!howie.isHowieSolo && !howie.metaActive && !howie.isTransforming){			
+		if (!howie.isHowieSolo && !howie.isTransforming){			
 			renderer.enabled = true;
 
 			//have head facing appropriate way
@@ -119,6 +125,7 @@ public class NewChompS : MonoBehaviour {
 			collider.enabled = true;
 
 			MoveChompHead();
+
 			ChompAttack(); // method for charging chomp attack
 			
 			ChargeAnimation();
@@ -148,6 +155,9 @@ public class NewChompS : MonoBehaviour {
 
 				DamageEnemy(other.gameObject.GetComponent<EnemyS>());
 
+				Instantiate(other.gameObject.GetComponent<EnemyS>().hitPrefab, other.transform.position, 
+				            Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));
+
 				// then turn off the attack
 				attacking = false;
 
@@ -175,47 +185,68 @@ public class NewChompS : MonoBehaviour {
 		// but this is so we can have one animation work no matter what the required charge time is
 		// for each enemy
 
-		if (charging){
+		// fire anim stuff
+		if (howie.metaActive){
 
-			for (int i = 0; i < chompChargeTexts.Count; i++){
-
-				if (i > currentTexture && timeHeld >= timeToTriggerChomp/(chompChargeTexts.Count-i)){
-					currentTexture = i;
-				}
-
-			}
-
-			/*if (yarla.holding){
-			float newSize = originalScale;
-
-			if (timeHeld < timeToTriggerChomp){
-
-			 newSize = originalScale + (yarla.holdTarget.transform.localScale.x-originalScale)*
-					(timeHeld/timeToTriggerChomp);
+			if (fireMetaIdleAnimRate > 0){
+				fireMetaIdleAnimRate -= Time.deltaTime;
 			}
 			else{
-				 newSize = yarla.holdTarget.transform.localScale.x;
+				currentFireMetaText++;
+				if (currentFireMetaText > fireMetaTextures.Count-1){
+					currentFireMetaText = 0;
+				}
+				fireMetaIdleAnimRate = fireMetaIdleAnimRateMax;
 			}
-
-			transform.localScale = new Vector3(newSize,newSize,transform.localScale.z);
-			}*/
+			renderer.material.SetTexture("_MainTex",fireMetaTextures[currentFireMetaText]);
 
 		}
+
 		else{
 
-			//transform.localScale = new Vector3(originalScale,originalScale,transform.localScale.z);
+			if (charging){
+		
+				for (int i = 0; i < chompChargeTexts.Count; i++){
+	
+					if (i > currentTexture && timeHeld >= timeToTriggerChomp/(chompChargeTexts.Count-i)){
+						currentTexture = i;
+					}
 
-			if (attacking){
-				currentTexture = 2;
+				}
+	
+				/*if (yarla.holding){
+				float newSize = originalScale;
+	
+			if (timeHeld < timeToTriggerChomp){	
+
+				 newSize = originalScale + (yarla.holdTarget.transform.localScale.x-originalScale)*
+						(timeHeld/timeToTriggerChomp);
+				}
+			else{
+					 newSize = yarla.holdTarget.transform.localScale.x;
+			}	
+
+				transform.localScale = new Vector3(newSize,newSize,transform.localScale.z);
+				}*/
+	
 			}
 			else{
-				currentTexture = 0;
+	
+				//transform.localScale = new Vector3(originalScale,originalScale,transform.localScale.z);
+	
+				if (attacking){
+					currentTexture = 2;
+				}
+				else{
+					currentTexture = 0;
+				}
 			}
+
+			//print(currentTexture);
+
+			renderer.material.SetTexture("_MainTex", chompChargeTexts[currentTexture]);
+
 		}
-
-		//print(currentTexture);
-
-		renderer.material.SetTexture("_MainTex", chompChargeTexts[currentTexture]);
 
 	}
 
@@ -313,7 +344,8 @@ public class NewChompS : MonoBehaviour {
 
 		//if (chompTarget != enemyDetector.enemyBeingHeld){
 			//if (attackTime < attackTimeMax){
-		if (distanceToHowie < maxDist && attacking){
+		if (((!howie.metaActive && distanceToHowie < maxDist) || 
+		     (howie.metaActive && distanceToHowie < maxDist*fireMaxDistMult)) && attacking){
 				if (attackTime == 0){
 					// launch chompy head at enemy
 					// this is the code that actually triggers the attack and makes the bite move
@@ -359,8 +391,10 @@ public class NewChompS : MonoBehaviour {
 	
 				attackTime += Time.deltaTime;
 
-				// turn on collider ONLY WHEN ATTACKING
+				// turn on collider ONLY WHEN ATTACKING and meta not active
+			if (!howie.metaActive){
 				collider.enabled = true;
+			}
 			}
 			else{
 
@@ -638,9 +672,9 @@ public class NewChompS : MonoBehaviour {
 	void ResetChomp () {
 		
 		//chompTarget = null;
-		chompAudioSource.pitch = 1 + Random.insideUnitCircle.x*soundPitchVar;
+	//	chompAudioSource.pitch = 1 + Random.insideUnitCircle.x*soundPitchVar;
 		
-		chompAudioSource.PlayOneShot(retractSound);
+		//chompAudioSource.PlayOneShot(retractSound);
 
 		chompButtonHeld = false;
 		charging = false;

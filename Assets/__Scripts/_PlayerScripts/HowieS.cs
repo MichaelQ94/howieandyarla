@@ -42,6 +42,8 @@ public class HowieS : MonoBehaviour {
 
 	public GameObject	yarlaShadow;
 	public GameObject	howieShadow;
+
+	public GameObject	hitEffect;
 	
 	public int 			currentWalkSprite = 0; // what frame is being displayed
 	public float 		walkCycleRate = 0.2f; // how often to change frame
@@ -466,6 +468,12 @@ public class HowieS : MonoBehaviour {
 		// we can also use this to set a consistent screen shake & time sleep if we so desire
 		
 		health -= damageAmount;
+
+		Vector3 bloodOffset = transform.position;
+		bloodOffset.x += Random.insideUnitCircle.x;
+		bloodOffset.y += Random.insideUnitCircle.y;
+
+		Instantiate(hitEffect, bloodOffset, Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));
 
 		// set lastTimeHit to current time
 		lastTimeHit = Time.time;

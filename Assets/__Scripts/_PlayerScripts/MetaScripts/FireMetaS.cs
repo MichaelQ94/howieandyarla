@@ -88,7 +88,7 @@ public class FireMetaS : MetaGeneralS {
 
 						for (int i = 0; i < smokeShotNumBullets; i++){
 
-							Vector3 smokeSpawn = attachedYarla.transform.position;
+							Vector3 smokeSpawn = attachedYarla.GetComponent<YarlaS>().chompHead.transform.position;
 							smokeSpawn.z -= 2;
 							
 							GameObject	smokeToShoot = Instantiate(smokeShotPrefab,smokeSpawn,Quaternion.identity) as GameObject;
@@ -125,8 +125,8 @@ public class FireMetaS : MetaGeneralS {
 					if (Input.GetAxis("Fire2PC") > 0 && !smokeAxisDown){
 						
 						for (int i = 0; i < smokeShotNumBullets; i++){
-							
-							Vector3 smokeSpawn = attachedYarla.transform.position;
+
+							Vector3 smokeSpawn = attachedYarla.GetComponent<YarlaS>().chompHead.transform.position;
 							smokeSpawn.z -= 2;
 							
 							GameObject	smokeToShoot = Instantiate(smokeShotPrefab,smokeSpawn,Quaternion.identity) as GameObject;
@@ -162,7 +162,7 @@ public class FireMetaS : MetaGeneralS {
 					
 					for (int i = 0; i < smokeShotNumBullets; i++){
 						
-						Vector3 smokeSpawn = attachedYarla.transform.position;
+						Vector3 smokeSpawn = attachedYarla.GetComponent<YarlaS>().chompHead.transform.position;
 						smokeSpawn.z -= 2;
 						
 						GameObject	smokeToShoot = Instantiate(smokeShotPrefab,smokeSpawn,Quaternion.identity) as GameObject;
@@ -252,6 +252,7 @@ public class FireMetaS : MetaGeneralS {
 						
 					}
 					
+					
 					if (Input.GetAxis("Fire1PC") > 0 && !fireAxisDown){
 						
 						Vector3 fireBallSpawn = attachedYarla.transform.position;
@@ -265,44 +266,44 @@ public class FireMetaS : MetaGeneralS {
 						
 						Vector3 fireBallVel = (fireBallTarget-attachedHowie.transform.position).normalized
 							*fireBallSpeed*Time.deltaTime;
-
 						
 						fireBallToShoot.rigidbody.velocity = fireBallVel;
 						
 						fireAxisDown = true;
 						fireBallROFCountdown = fireBallRateOfFire;
-
+						
 						CameraShakeS.C.LargeShake();
 						
 					}
-				}
 
+				}
 			}
 			else{
 				if (Input.GetMouseButtonUp(0)){
 					fireAxisDown = false;
+
 				}
 
-				if (Input.GetMouseButtonDown(0)){
+				if (Input.GetMouseButtonDown(0) && !fireAxisDown){
 
-					Vector3 fireBallSpawn = attachedYarla.transform.position;
-					fireBallSpawn.z -= 2;
-					
-					GameObject	fireBallToShoot = Instantiate(fireBallPrefab,fireBallSpawn,Quaternion.identity) as GameObject;
-					
-					Vector3 fireBallTarget = attachedYarla.transform.position;
-					fireBallTarget.x += Random.insideUnitCircle.x*fireBallAccMult;
-					fireBallTarget.y += Random.insideUnitCircle.y*fireBallAccMult;
-					
-					Vector3 fireBallVel = (fireBallTarget-attachedHowie.transform.position).normalized
-						*fireBallSpeed*Time.deltaTime;
-					
-					fireBallToShoot.rigidbody.velocity = fireBallVel;
-					
-					fireAxisDown = true;
-					fireBallROFCountdown = fireBallRateOfFire;
-					
-					CameraShakeS.C.LargeShake();
+						Vector3 fireBallSpawn = attachedYarla.transform.position;
+						fireBallSpawn.z -= 2;
+						
+						GameObject	fireBallToShoot = Instantiate(fireBallPrefab,fireBallSpawn,Quaternion.identity) as GameObject;
+						
+						Vector3 fireBallTarget = attachedYarla.transform.position;
+						fireBallTarget.x += Random.insideUnitCircle.x*fireBallAccMult;
+						fireBallTarget.y += Random.insideUnitCircle.y*fireBallAccMult;
+						
+						Vector3 fireBallVel = (fireBallTarget-attachedHowie.transform.position).normalized
+							*fireBallSpeed*Time.deltaTime;
+						
+						fireBallToShoot.rigidbody.velocity = fireBallVel;
+						
+						fireAxisDown = true;
+						fireBallROFCountdown = fireBallRateOfFire;
+						
+						CameraShakeS.C.LargeShake();
 
 				}
 

@@ -57,6 +57,11 @@ public class YarlaS : MonoBehaviour {
 
 	public List<Texture>	launchAnimFrames;
 
+	public int 	currentFireMetaText;
+	public float 	fireMetaIdleAnimRate;
+	public float 	fireMetaIdleAnimRateMax = 0.04f;
+	public List<Texture>		fireMetaTextures;
+
 	public HowieS howie;
 
 	public YarlaCtrl yarlaCtrl;
@@ -81,11 +86,18 @@ public class YarlaS : MonoBehaviour {
 
 	void FixedUpdate () {
 		// turn throw and grab off when just solo howie
-		if (!howie.isHowieSolo && !howie.metaActive && !howie.isTransforming){
+		if (!howie.isHowieSolo && !howie.isTransforming){
 
-			HoldEnemy ();
+			
 			renderer.enabled = true;
-			collider.enabled = true;
+
+			if (!howie.metaActive){
+				HoldEnemy ();
+				collider.enabled = true;
+			}
+			else{
+				collider.enabled = false;
+			}
 
 			//DriftBack();
 
@@ -202,24 +214,39 @@ public class YarlaS : MonoBehaviour {
 
 	void LookMean () {
 
-		// for animating on launch
-		if (launched){
-			if (currentLaunchFrame < launchAnimFrames.Count - 1){
-				launchAnimRate -= Time.deltaTime;
-				if (launchAnimRate <= 0){
-					launchAnimRate = launchAnimRateMax;
-					currentLaunchFrame++;
-				}
+		if (howie.metaActive){
+			if (fireMetaIdleAnimRate > 0){
+				fireMetaIdleAnimRate -= Time.deltaTime;
 			}
+			else{
+				currentFireMetaText++;
+				if (currentFireMetaText > fireMetaTextures.Count-1){
+					currentFireMetaText = 0;
+				}
+				fireMetaIdleAnimRate = fireMetaIdleAnimRateMax;
+			}
+			renderer.material.SetTexture("_MainTex",fireMetaTextures[currentFireMetaText]);
 		}
 		else{
-			launchAnimRate = launchAnimRateMax;
-			currentLaunchFrame = 0;
+			// for animating on launch
+			if (launched){
+				if (currentLaunchFrame < launchAnimFrames.Count - 1){
+					launchAnimRate -= Time.deltaTime;
+					if (launchAnimRate <= 0){
+						launchAnimRate = launchAnimRateMax;
+						currentLaunchFrame++;
+					}
+				}
+			}
+			else{
+				launchAnimRate = launchAnimRateMax;
+				currentLaunchFrame = 0;
+			}
+	
+			//print(currentLaunchFrame);
+	
+			renderer.material.SetTexture("_MainTex", launchAnimFrames[currentLaunchFrame]);
 		}
-
-		//print(currentLaunchFrame);
-
-		renderer.material.SetTexture("_MainTex", launchAnimFrames[currentLaunchFrame]);
 
 	}
 

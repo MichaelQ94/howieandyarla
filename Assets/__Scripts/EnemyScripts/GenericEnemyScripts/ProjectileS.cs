@@ -74,8 +74,15 @@ public class ProjectileS : MonoBehaviour {
 			Destroy(gameObject);
 		}
 
-		if (animate && muzzleFlashOver){
-			Animate();
+		if (animate){
+			if (doMuzzleFlare){
+				if(muzzleFlashOver){
+					Animate();
+				}
+			}
+			else{
+				Animate();
+			}
 		}
 	
 	}

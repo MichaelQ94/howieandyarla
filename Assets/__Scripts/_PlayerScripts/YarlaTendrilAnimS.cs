@@ -15,9 +15,14 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 	public YarlaS	attachedYarlaS;
 	public NewChompS attachedChompS;
 
+	public HowieS	howieScript;
+
 	public GameObject	attachedHowie;
 
 	public List<Texture>	wiggleFrames;
+	public List<Texture>	wiggleFramesFire;
+
+	public float 		dontShowTime;
 
 	// Use this for initialization
 	void Start () {
@@ -25,13 +30,14 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 		originalZ = transform.localPosition.z;
 
 		attachedHowie = GameObject.Find("HowieSprite");
-		/*if (targetHead.GetComponent<YarlaS>() != null){
+		howieScript = GameObject.Find("Howie").GetComponent<HowieS>();
+
+		if (targetHead.GetComponent<YarlaS>() != null){
 			attachedYarlaS = targetHead.GetComponent<YarlaS>();
-			//attachedHowie = attachedYarlaS.howie.gameObject;
 		}
 		if (targetHead.GetComponent<NewChompS>() != null){
 			attachedChompS = targetHead.GetComponent<NewChompS>();
-		}*/
+		}
 
 
 	
@@ -50,6 +56,16 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 
 		FaceHead();
 		TendrilWiggle();
+
+		/*if (dontShowTime > 0){
+			dontShowTime -= Time.deltaTime;
+			renderer.enabled = false;
+		}
+		else{
+			if (!renderer.enabled){
+				renderer.enabled = true;
+			}
+		}*/
 
 
 
@@ -84,7 +100,13 @@ public class YarlaTendrilAnimS : MonoBehaviour {
 
 			}
 
-			renderer.material.SetTexture("_MainTex",wiggleFrames[currentWiggleFrame]);
+			// change so i can detect what meta is active
+			if (howieScript.metaActive){
+				renderer.material.SetTexture("_MainTex",wiggleFramesFire[currentWiggleFrame]);
+			}
+			else{
+				renderer.material.SetTexture("_MainTex",wiggleFrames[currentWiggleFrame]);
+			}
 		}
 	}
 

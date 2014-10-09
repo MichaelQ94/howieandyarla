@@ -47,6 +47,16 @@ public class SilverfishS : EnemyS {
 	public int 		currentAttackingTexture = 0;
 	public float attackingFrameRate = 0.042f; // duration per individual frame
 	public float attackingFrameRateCountdown = 0;
+
+	public List<Texture>	deadTextures;
+	public int currentDeadTexture = 0; 
+	public float deadFrameRateMax = 0.042f; 
+	public float deadFrameRate = 0;
+
+	public List<Texture>	hitTextures;
+	public int currentHitTexture = 0; 
+	public float hitFrameRateMax = 0.042f; 
+	public float hitFrameRate = 0;
 	
 	private bool facingRight = false;
 	
@@ -207,7 +217,15 @@ public class SilverfishS : EnemyS {
 		void ManageSprite () {
 			
 			if (isDead){
-				renderer.material.SetTexture("_MainTex", deadTexture);
+				// animate death state
+				if (currentDeadTexture < deadTextures.Count-1){
+					deadFrameRate -= Time.deltaTime;
+				}
+				if (deadFrameRate <= 0){
+					currentDeadTexture++;
+					deadFrameRate = deadFrameRateMax;
+				}
+				renderer.material.SetTexture("_MainTex",deadTextures[currentDeadTexture]);
 			}
 			else if (beingHeld || beingThrown){
 				if (vulnerableFrameRateCountdown > 0){
@@ -223,7 +241,15 @@ public class SilverfishS : EnemyS {
 				renderer.material.SetTexture("_MainTex", vulnerableTextures[currentVulnerableTexture]);
 			}
 			else if (hitStunned){
-				renderer.material.SetTexture("_MainTex", hitStunTexture);
+				// animate hit state
+				if (currentHitTexture < hitTextures.Count-1){
+					hitFrameRate -= Time.deltaTime;
+				}
+				if (hitFrameRate <= 0){
+					currentHitTexture++;
+					hitFrameRate = hitFrameRateMax;
+				}
+				renderer.material.SetTexture("_MainTex",hitTextures[currentHitTexture]);
 			}
 			else{
 				
