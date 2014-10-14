@@ -19,6 +19,8 @@ public class CameraFollow2D : MonoBehaviour {
 
 	public bool 		doNotChangeSize; // for debug mode purposes
 
+	public bool			presentationMode = false;
+
 	void Start () {
 
 		orthoOriginSize = camera.orthographicSize;
@@ -26,6 +28,19 @@ public class CameraFollow2D : MonoBehaviour {
 		poi = GameObject.Find ("AdaptiveCameraPoint");
 		attachedChomp = GameObject.Find ("Chompy").GetComponent<NewChompS>();
 		attachedYarla = GameObject.Find ("Yarla").GetComponent<YarlaS>();
+
+	}
+
+	void Update () {
+
+		if (presentationMode){
+			if (Input.GetKeyDown(KeyCode.J)){
+				Application.LoadLevel(Application.loadedLevelName);
+			}
+			if (Input.GetKeyDown(KeyCode.Escape)){
+				Application.Quit();
+			}
+		}
 
 	}
 	

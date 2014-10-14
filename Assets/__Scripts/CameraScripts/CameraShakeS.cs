@@ -33,7 +33,7 @@ public class CameraShakeS : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update(){
-		if(shake_intensity > 0){
+		if(shake_intensity > 0 && !sleeping){
 			//print ("SHAKING");
 			if (!continuousShaking){
 				Vector3 camPos = transform.position;

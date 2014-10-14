@@ -149,6 +149,13 @@ public class ProjectileS : MonoBehaviour {
 			HowieS howie = other.gameObject.GetComponent<HowieS>();
 			CameraShakeS.C.SmallShake();
 			howie.TakeDamage(strength); // damage Howie
+
+			// howie hit effect
+			Vector3	bloodPos = (transform.position-other.transform.position)/2;
+			
+			Instantiate(howie.GetComponent<HowieS>().hitEffect, bloodPos,
+			            Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));
+
 			CameraShakeS.C.TimeSleep(0.2f);
 			Destroy(gameObject);
 			howie.KnockBack(knockBackTime);
@@ -206,7 +213,7 @@ public class ProjectileS : MonoBehaviour {
 					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity*50,1,strength);
 				}
 				else{
-					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity,0.2f,strength);
+					other.gameObject.GetComponent<EnemyS>().EnemyKnockback(rigidbody.velocity,0.1f,strength);
 				}
 				CameraShakeS.C.LargeShake();
 				CameraShakeS.C.TimeSleep(0.1f);

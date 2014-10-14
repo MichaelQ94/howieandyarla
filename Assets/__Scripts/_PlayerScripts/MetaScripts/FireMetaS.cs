@@ -333,6 +333,7 @@ public class FireMetaS : MetaGeneralS {
 
 	}
 
+
 	void SpawnFire(){
 
 		spawnFireRate -= Time.deltaTime;

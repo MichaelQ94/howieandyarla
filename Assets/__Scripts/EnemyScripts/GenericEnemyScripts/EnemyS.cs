@@ -302,8 +302,8 @@ public class EnemyS : MonoBehaviour {
 		//}
 
 		//camera shake and time sleep
-		CameraShakeS.C.SmallShake();
-		CameraShakeS.C.TimeSleep(0.1f);
+		//CameraShakeS.C.SmallShake();
+		//CameraShakeS.C.TimeSleep(0.1f);
 		
 
 	}

@@ -155,8 +155,14 @@ public class NewChompS : MonoBehaviour {
 
 				DamageEnemy(other.gameObject.GetComponent<EnemyS>());
 
-				Instantiate(other.gameObject.GetComponent<EnemyS>().hitPrefab, other.transform.position, 
-				            Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));
+				if (other.gameObject.GetComponent<EnemyS>().hitPrefab != null){
+
+					Vector3	bloodPos = other.contacts[0].point;
+
+					Instantiate(other.gameObject.GetComponent<EnemyS>().hitPrefab, bloodPos,
+					            Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));
+
+				}
 
 				// then turn off the attack
 				attacking = false;

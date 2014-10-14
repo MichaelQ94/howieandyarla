@@ -309,6 +309,13 @@ public class SilverfishS : EnemyS {
 			if (other.gameObject.tag == "Player" && !beingThrown){
 				if (!beingHeld){
 					level.howie.GetComponent<HowieS>().TakeDamage(strength);
+
+					// howie hit effect
+					Vector3	bloodPos = other.contacts[0].point;
+					
+					Instantiate(level.howie.GetComponent<HowieS>().hitEffect, bloodPos,
+					            Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));
+
 					CameraShakeS.C.SmallShake();
 					CameraShakeS.C.TimeSleep(0.2f);
 					

@@ -141,10 +141,13 @@ public class PaperMonsterS : EnemyS {
 				teleTarget.y += Random.insideUnitCircle.y*teleTargetRandomizationMult;
 				teleTarget.z = transform.position.z;
 
+					if (Vector3.Distance(teleTarget,level.howie.transform.position) > 10){
+
 					currentTeleTexture = 0;
 					changeTeleFrameTime = changeTeleFrameTimeMax;
 					teleporting = true;
 					rigidbody.velocity = Vector3.zero;
+					}
 				}
 				
 

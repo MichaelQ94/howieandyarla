@@ -87,6 +87,9 @@ public class HowieS : MonoBehaviour {
 	//public float 		restYPos = 3;
 	//public float 		resetPosSpeed = 1;
 
+	public bool		presentationMode = false;
+	public bool 	dontDie = false;
+
 	// Use this for initialization
 	void Start () {
 
@@ -110,6 +113,12 @@ public class HowieS : MonoBehaviour {
 		}
 		if (!isHowieSolo){
 			ActivateMeta();
+		}
+
+		if (presentationMode){
+			if (Input.GetKeyDown(KeyCode.I)){
+				dontDie = !dontDie;
+			}
 		}
 		
 	}
@@ -469,11 +478,11 @@ public class HowieS : MonoBehaviour {
 		
 		health -= damageAmount;
 
-		Vector3 bloodOffset = transform.position;
+		/*Vector3 bloodOffset = transform.position;
 		bloodOffset.x += Random.insideUnitCircle.x;
 		bloodOffset.y += Random.insideUnitCircle.y;
 
-		Instantiate(hitEffect, bloodOffset, Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));
+		Instantiate(hitEffect, bloodOffset, Quaternion.Euler(new Vector3(0,0,Random.Range(0,359))));*/
 
 		// set lastTimeHit to current time
 		lastTimeHit = Time.time;
@@ -482,7 +491,12 @@ public class HowieS : MonoBehaviour {
 		//though we may find we want to change how this works later
 		
 		if (health <= 0){
-			GameOver();
+			if (!dontDie){
+				GameOver();
+			}
+			else{
+				health = 1;
+			}
 		}
 		
 		
